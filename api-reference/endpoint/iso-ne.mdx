@@ -1,0 +1,177 @@
+---
+title: 'ISO-NE Interconnection Queue'
+api: 'GET https://api.cleanview.co/api/v0/interconnection/iso-ne'
+description: 'Access real-time ISO New England interconnection queue data for renewable energy projects'
+---
+
+## Overview
+
+The ISO-NE interconnection queue endpoint provides access to real-time data from ISO New England's interconnection queue. ISO-NE serves the six New England states.
+
+<Note>
+**ISO-NE Coverage**: Contains **300+ projects** across New England. Top technologies: Solar (120+ projects), Wind (80+ projects), Battery Storage (60+ projects), Natural Gas (40+ projects).
+</Note>
+
+## Endpoint
+
+<CodeGroup>
+```bash cURL
+curl -H "x-api-key: your_api_key_here" \
+  "https://api.cleanview.co/api/v0/interconnection/iso-ne?limit=50"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.cleanview.co/api/v0/interconnection/iso-ne?limit=50', {
+  headers: {
+    'x-api-key': 'your_api_key_here'
+  }
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {'x-api-key': 'your_api_key_here'}
+response = requests.get(
+    'https://api.cleanview.co/api/v0/interconnection/iso-ne?limit=50',
+    headers=headers
+)
+data = response.json()
+```
+</CodeGroup>
+
+## Coverage Area
+
+**States Served**: Connecticut, Maine, Massachusetts, New Hampshire, Rhode Island, and Vermont.
+
+## Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | 1000 | Number of records to return (50-5000) |
+| `offset` | integer | 0 | Number of records to skip |
+| `state` | string | - | Filter by state code (MA, CT, ME, etc.) |
+| `states` | array | - | Filter by multiple states (comma-separated) |
+| `technology` | string | - | Filter by standardized technology type |
+| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `status` | string | - | Filter by standardized status |
+| `minCapacity` | number | - | Minimum capacity in MW |
+| `maxCapacity` | number | - | Maximum capacity in MW |
+| `dataSource` | string | - | Filter by data source (active, withdrawn, etc.) |
+| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+
+### Technology Distribution
+
+| Technology | Count | Description |
+|------------|-------|-------------|
+| `Solar` | 120+ | Solar photovoltaic projects |
+| `Wind` | 80+ | Wind turbine projects (onshore and offshore) |
+| `Battery` | 60+ | Battery energy storage systems |
+| `Natural Gas` | 40+ | Natural gas generation |
+| `Other` | 50+ | Other technologies |
+
+### Status Options
+
+| Status | Description |
+|--------|-------------|
+| `Planned` | Active projects in queue |
+| `Operating` | Commercial operation achieved |
+| `Cancelled` | Withdrawn or terminated |
+
+### Top States by Project Count
+
+| State | Project Count | Top Technologies |
+|-------|---------------|------------------|
+| Massachusetts | ~100 | Solar, Wind (offshore) |
+| Connecticut | ~60 | Solar, Natural Gas |
+| Maine | ~50 | Solar, Wind |
+| New Hampshire | ~40 | Solar |
+| Rhode Island | ~30 | Solar, Wind (offshore) |
+| Vermont | ~25 | Solar, Wind |
+
+## Example Requests
+
+<AccordionGroup>
+  <Accordion title="Get Offshore Wind Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/iso-ne?technology=Wind&minCapacity=400&limit=50"
+    ```
+  </Accordion>
+  
+  <Accordion title="Get Solar Projects in Massachusetts">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/iso-ne?technology=Solar&state=MA&limit=50"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Response Schema
+
+<ResponseExample>
+```json Example Response
+{
+  "data": [
+    {
+      "iso": "ISNE",
+      "queue_id": "1000_solar_battery_req20200409_MA_barnstable_poieversource_harwich_968",
+      "project_name": "Solar + battery",
+      "capacity_mw": 3.150000095367432,
+      "technology": "G",
+      "fuel": "SUN BAT",
+      "status": "Planned",
+      "detailed_status": null,
+      "operating_date": "2023-11-30T00:00:00.000Z",
+      "request_date": "2020-04-09T00:00:00.000Z",
+      "county": "Barnstable",
+      "state": "MA",
+      "queue_position": "1000",
+      "neiso_developer": null,
+      "developer": null,
+      "data_source": "active",
+      "balancing_authority_code": "NEISO",
+      "technology_normalized": "Hybrid - Solar + Storage"
+    }
+  ],
+  "iso": "ISO-NE",
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 312,
+    "hasMore": true,
+    "currentPage": 1,
+    "totalPages": 7
+  },
+  "filters": {
+    "states": null,
+    "technologies": null,
+    "minCapacity": null,
+    "maxCapacity": null
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  }
+}
+```
+</ResponseExample>
+
+All ISO-NE interconnection data follows the standardized response format with ISO-NE-specific fields including developer information and data source tracking.
+
+### ISO-NE-Specific Fields
+
+| Field | Description |
+|-------|-------------|
+| `neiso_developer` | Developer name |
+| `data_source` | Source dataset (active, withdrawn, etc.) |
+
+<Note>
+**Data Updates**: ISO-NE queue data is updated based on ISO New England's interconnection queue reports.
+</Note>
+
+<Info>
+**Offshore Wind**: New England has significant offshore wind development, particularly off the coasts of Massachusetts and Rhode Island. These projects typically have large capacities (400+ MW).
+</Info>

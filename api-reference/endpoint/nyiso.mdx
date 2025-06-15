@@ -1,0 +1,184 @@
+---
+title: 'NYISO Interconnection Queue'
+api: 'GET https://api.cleanview.co/api/v0/interconnection/nyiso'
+description: 'Access real-time NYISO interconnection queue data for renewable energy projects'
+---
+
+## Overview
+
+The NYISO interconnection queue endpoint provides access to real-time data from the New York Independent System Operator (NYISO) interconnection queue. NYISO serves all of New York State.
+
+<Note>
+**NYISO Coverage**: Contains **400+ projects** across New York State. Top technologies: Solar (150+ projects), Wind (100+ projects), Battery Storage (80+ projects), Natural Gas (70+ projects).
+</Note>
+
+## Endpoint
+
+<CodeGroup>
+```bash cURL
+curl -H "x-api-key: your_api_key_here" \
+  "https://api.cleanview.co/api/v0/interconnection/nyiso?limit=50"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.cleanview.co/api/v0/interconnection/nyiso?limit=50', {
+  headers: {
+    'x-api-key': 'your_api_key_here'
+  }
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {'x-api-key': 'your_api_key_here'}
+response = requests.get(
+    'https://api.cleanview.co/api/v0/interconnection/nyiso?limit=50',
+    headers=headers
+)
+data = response.json()
+```
+</CodeGroup>
+
+## Coverage Area
+
+**State Served**: New York (entire state)
+
+## Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | 1000 | Number of records to return (50-5000) |
+| `offset` | integer | 0 | Number of records to skip |
+| `technology` | string | - | Filter by standardized technology type |
+| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `status` | string | - | Filter by standardized status |
+| `minCapacity` | number | - | Minimum capacity in MW |
+| `maxCapacity` | number | - | Maximum capacity in MW |
+| `zone` | string | - | Filter by NYISO load zone (A-K) |
+| `utility` | string | - | Filter by transmission utility |
+| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+
+### Technology Distribution
+
+| Technology | Count | Description |
+|------------|-------|-------------|
+| `Solar` | 150+ | Solar photovoltaic projects |
+| `Wind` | 100+ | Wind turbine projects (onshore and offshore) |
+| `Battery` | 80+ | Battery energy storage systems |
+| `Natural Gas` | 70+ | Natural gas generation |
+| `Other` | 50+ | Other technologies |
+
+### Status Options
+
+| Status | Description |
+|--------|-------------|
+| `Planned` | Active projects in queue |
+| `Operating` | Commercial operation achieved |
+| `Cancelled` | Withdrawn or terminated |
+
+### NYISO Load Zones
+
+| Zone | Description | Primary Technologies |
+|------|-------------|---------------------|
+| A | Western NY | Wind, Natural Gas |
+| B | Genesee | Wind, Solar |
+| C | Central NY | Wind, Solar |
+| D | North NY | Wind, Hydro |
+| E | Mohawk Valley | Solar, Natural Gas |
+| F | Capital | Solar, Wind |
+| G | Hudson Valley | Solar, Storage |
+| H | Millwood | Solar, Storage |
+| I | Dunwoodie | Solar, Storage |
+| J | NYC | Solar, Storage, Natural Gas |
+| K | Long Island | Solar, Storage, Wind (offshore) |
+
+## Example Requests
+
+<AccordionGroup>
+  <Accordion title="Get Solar Projects in NYC Area (Zone J)">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/nyiso?technology=Solar&zone=J&limit=50"
+    ```
+  </Accordion>
+  
+  <Accordion title="Get Offshore Wind Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/nyiso?technology=Wind&minCapacity=400&limit=50"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Response Schema
+
+<ResponseExample>
+```json Example Response
+{
+  "data": [
+    {
+      "iso": "NYIS",
+      "queue_id": "2023-001_solar_project",
+      "project_name": "Empire State Solar",
+      "capacity_mw": 75.0,
+      "technology": "Solar",
+      "fuel": "Solar",
+      "status": "Planned",
+      "detailed_status": "Active",
+      "operating_date": "2025-08-01T00:00:00.000Z",
+      "request_date": "2023-02-10T00:00:00.000Z",
+      "county": "Albany",
+      "state": "NY",
+      "queue_position": "2023-001",
+      "developer_interconnection_customer": "Empire Solar Development LLC",
+      "developer": null,
+      "zone": "F",
+      "utility": "National Grid",
+      "balancing_authority_code": "NYISO",
+      "technology_normalized": "Solar"
+    }
+  ],
+  "iso": "NYISO",
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 423,
+    "hasMore": true,
+    "currentPage": 1,
+    "totalPages": 9
+  },
+  "filters": {
+    "states": null,
+    "technologies": null,
+    "zone": null,
+    "minCapacity": null,
+    "maxCapacity": null
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  }
+}
+```
+</ResponseExample>
+
+All NYISO interconnection data follows the standardized response format with NYISO-specific fields including load zone and utility information.
+
+### NYISO-Specific Fields
+
+| Field | Description |
+|-------|-------------|
+| `zone` | NYISO load zone (A-K) |
+| `utility` | Transmission utility |
+| `developer_interconnection_customer` | Developer/customer name |
+
+<Note>
+**Data Updates**: NYISO queue data is updated based on NYISO's interconnection queue reports.
+</Note>
+
+<Info>
+**Load Zones**: NYISO divides New York into 11 load zones (A-K) that reflect transmission constraints and local market conditions. Zone information helps identify regional development patterns.
+</Info>

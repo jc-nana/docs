@@ -1,35 +1,29 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Cleanview API Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#2962FF",
+    "light": "#2962FF",
+    "dark": "#1C44B2"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Getting Started",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Introduction",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "quickstart"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Authentication",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "authentication"
             ]
           }
         ]
@@ -38,18 +32,36 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "Overview",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "EIA Data",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/eia-860m",
+              "api-reference/eia-codes"
+            ]
+          },
+          {
+            "group": "Interconnection Queues",
+            "pages": [
+              "api-reference/interconnection-overview",
+              "api-reference/interconnection-codes",
+              "api-reference/endpoint/ercot",
+              "api-reference/endpoint/caiso",
+              "api-reference/endpoint/pjm",
+              "api-reference/endpoint/miso",
+              "api-reference/endpoint/spp",
+              "api-reference/endpoint/nyiso",
+              "api-reference/endpoint/iso-ne"
+            ]
+          },
+          {
+            "group": "Projects",
+            "pages": [
+              "api-reference/endpoint/projects"
             ]
           }
         ]
@@ -58,19 +70,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "anchor": "Newsletter",
+          "href": "https://newsletter.cleanview.co/",
           "icon": "newspaper"
+        },
+        {
+          "anchor": "LinkedIn",
+          "href": "https://www.linkedin.com/company/cleanview-energy",
+          "icon": "linkedin"
+        },
+        {
+          "anchor": "Cleanview Platform",
+          "href": "https://cleanview.co",
+          "icon": "globe"
         }
       ]
     }
@@ -82,21 +94,24 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Newsletter",
+        "href": "https://newsletter.cleanview.co/"
+      },
+      {
+        "label": "Contact Support",
+        "href": "https://cleanview.co/contact"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get API Key",
+      "href": "mailto:api@cleanview.energy?subject=API Key Request"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "linkedin": "https://www.linkedin.com/company/cleanview-energy",
+      "x-twitter": "https://x.com/CleanviewEnergy"
     }
   }
 }

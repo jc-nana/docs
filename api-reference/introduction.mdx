@@ -1,33 +1,137 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API Reference'
+description: 'Complete reference for all Cleanview API endpoints'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Base URL
 
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+All API requests should be made to:
+```
+https://api.cleanview.energy/api/v0
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All endpoints require authentication using an API key in the Authorization header:
+
+```bash
+Authorization: Bearer cv_pub_your_api_key_here
+```
+
+See the [Authentication guide](/authentication) for detailed information on obtaining and using API keys.
+
+## Response Format
+
+All API responses follow a consistent structure:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "success": true,
+  "data": [...],
+  "error": null,
+  "message": null,
+  "metadata": {
+    "total": 1000,
+    "limit": 50,
+    "offset": 0
+  },
+  "pagination": {
+    "next": "https://api.cleanview.energy/api/v0/endpoint?limit=50&offset=50",
+    "previous": null
   }
-]
+}
 ```
+
+### Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `success` | boolean | Indicates if the request was successful |
+| `data` | array/object | The requested data |
+| `error` | string | Error code if the request failed |
+| `message` | string | Human-readable error message |
+| `metadata` | object | Information about the dataset and pagination |
+| `pagination` | object | Links to next/previous pages |
+
+## Error Handling
+
+When a request fails, the API returns an appropriate HTTP status code and error information:
+
+```json
+{
+  "success": false,
+  "data": null,
+  "error": "INVALID_API_KEY",
+  "message": "The provided API key is invalid or has been revoked",
+  "metadata": null,
+  "pagination": null
+}
+```
+
+### Common Error Codes
+
+| Error Code | HTTP Status | Description |
+|------------|-------------|------------- |
+| `API_KEY_MISSING` | 401 | No API key provided |
+| `INVALID_API_KEY` | 401 | Invalid or revoked API key |
+| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
+| `INVALID_PARAMETER` | 400 | Invalid query parameter |
+| `INTERNAL_ERROR` | 500 | Server error |
+
+## Pagination
+
+All list endpoints support pagination using `limit` and `offset` parameters:
+
+| Parameter | Type | Default | Max | Description |
+|-----------|------|---------|-----|-------------|
+| `limit` | integer | 50 | 3000 | Number of records to return |
+| `offset` | integer | 0 | N/A | Number of records to skip |
+
+**Example:**
+```
+GET /api/v0/eia-860m?limit=100&offset=200
+```
+
+## Available Endpoints
+
+<CardGroup cols={2}>
+  <Card title="EIA 860M Data" icon="database" href="/api-reference/endpoint/eia-860m">
+    Access the latest EIA 860M project records for planned and operating renewable energy projects
+  </Card>
+  <Card title="ERCOT Queue" icon="network-wired" href="/api-reference/endpoint/ercot">
+    Real-time interconnection queue data from ERCOT
+  </Card>
+  <Card title="CAISO Queue" icon="network-wired" href="/api-reference/endpoint/caiso">
+    Real-time interconnection queue data from CAISO
+  </Card>
+  <Card title="PJM Queue" icon="network-wired" href="/api-reference/endpoint/pjm">
+    Real-time interconnection queue data from PJM
+  </Card>
+  <Card title="MISO Queue" icon="network-wired" href="/api-reference/endpoint/miso">
+    Real-time interconnection queue data from MISO
+  </Card>
+  <Card title="SPP Queue" icon="network-wired" href="/api-reference/endpoint/spp">
+    Real-time interconnection queue data from SPP
+  </Card>
+  <Card title="NYISO Queue" icon="network-wired" href="/api-reference/endpoint/nyiso">
+    Real-time interconnection queue data from NYISO
+  </Card>
+  <Card title="ISO-NE Queue" icon="network-wired" href="/api-reference/endpoint/iso-ne">
+    Real-time interconnection queue data from ISO-NE
+  </Card>
+  <Card title="Unified Projects" icon="layer-group" href="/api-reference/endpoint/projects">
+    Consolidated project database merging data from all sources
+  </Card>
+</CardGroup>
+
+## Data Sources
+
+The Cleanview API aggregates data from multiple authoritative sources:
+
+- **EIA 860M**: U.S. Energy Information Administration monthly electric generator inventory
+- **Grid Operator Queues**: Real-time interconnection queue data from major ISOs/RTOs
+- **Cleanview Database**: Unified project records with cross-referencing and data quality improvements
+
+<Note>
+**Data Freshness**: Most data is updated daily, with some sources updated more frequently. Check the `last_updated` field in API responses for specific timestamp information.
+</Note>

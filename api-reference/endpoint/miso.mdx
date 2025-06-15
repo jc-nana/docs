@@ -1,0 +1,174 @@
+---
+title: 'MISO Interconnection Queue'
+api: 'GET https://api.cleanview.co/api/v0/interconnection/miso'
+description: 'Access real-time MISO interconnection queue data for renewable energy projects'
+---
+
+## Overview
+
+The MISO interconnection queue endpoint provides access to real-time data from Midcontinent Independent System Operator (MISO) interconnection queue. MISO serves 15 states and one Canadian province across the Midwest and South.
+
+<Note>
+**MISO Coverage**: Contains **1,500+ projects** across the Midwest and South. Top technologies: Wind (500+ projects), Solar (400+ projects), Natural Gas (300+ projects), Battery Storage (200+ projects).
+</Note>
+
+## Endpoint
+
+<CodeGroup>
+```bash cURL
+curl -H "x-api-key: your_api_key_here" \
+  "https://api.cleanview.co/api/v0/interconnection/miso?limit=50"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.cleanview.co/api/v0/interconnection/miso?limit=50', {
+  headers: {
+    'x-api-key': 'your_api_key_here'
+  }
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {'x-api-key': 'your_api_key_here'}
+response = requests.get(
+    'https://api.cleanview.co/api/v0/interconnection/miso?limit=50',
+    headers=headers
+)
+data = response.json()
+```
+</CodeGroup>
+
+## Coverage Area
+
+**States Served**: Arkansas, Illinois, Indiana, Iowa, Kentucky, Louisiana, Michigan, Minnesota, Mississippi, Missouri, Montana, North Dakota, Texas, Wisconsin, and parts of South Dakota. Also serves Manitoba, Canada.
+
+## Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | 1000 | Number of records to return (50-5000) |
+| `offset` | integer | 0 | Number of records to skip |
+| `state` | string | - | Filter by state code |
+| `states` | array | - | Filter by multiple states (comma-separated) |
+| `technology` | string | - | Filter by standardized technology type |
+| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `status` | string | - | Filter by standardized status |
+| `minCapacity` | number | - | Minimum capacity in MW |
+| `maxCapacity` | number | - | Maximum capacity in MW |
+| `studyCycle` | string | - | Filter by MISO study cycle |
+| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+
+### Technology Distribution
+
+| Technology | Count | Description |
+|------------|-------|-------------|
+| `Wind` | 500+ | Wind turbine projects (dominant in MISO) |
+| `Solar` | 400+ | Solar photovoltaic projects |
+| `Natural Gas` | 300+ | Natural gas generation |
+| `Battery` | 200+ | Battery energy storage systems |
+| `Other` | 100+ | Other technologies |
+
+### Status Options
+
+| Status | Description |
+|--------|-------------|
+| `Planned` | Active projects in queue |
+| `Operating` | Commercial operation achieved |
+| `Cancelled` | Withdrawn or terminated |
+
+## Example Requests
+
+<AccordionGroup>
+  <Accordion title="Get Wind Projects in Illinois">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/miso?technology=Wind&state=IL&limit=50"
+    ```
+  </Accordion>
+  
+  <Accordion title="Get Large Solar Projects (>100 MW)">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/miso?technology=Solar&minCapacity=100&limit=50"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Response Schema
+
+<ResponseExample>
+```json Example Response
+{
+  "data": [
+    {
+      "iso": "MISO",
+      "queue_id": "J1000",
+      "project_name": "Project J1000",
+      "capacity_mw": 50,
+      "technology": "Photovoltaic",
+      "fuel": "Solar",
+      "status": "Operating",
+      "detailed_status": "Done",
+      "operating_date": "2021-10-01T04:00:00.000Z",
+      "request_date": "2018-03-12T04:00:00.000Z",
+      "county": "Grant County",
+      "state": "WI",
+      "queue_position": "J1000",
+      "interconnecting_entity": null,
+      "developer": null,
+      "study_cycle": "DPP-2018-APR",
+      "study_group": "East (ATC)",
+      "service_type": "Network Resource Interconnection Service (NRIS)",
+      "balancing_authority_code": "MISO",
+      "technology_normalized": "Solar",
+      "study_phase": "GIA",
+      "post_gia_status": "In Service",
+      "winter_capacity_mw": 50,
+      "summer_capacity_mw": 50
+    }
+  ],
+  "iso": "MISO",
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 1567,
+    "hasMore": true,
+    "currentPage": 1,
+    "totalPages": 32
+  },
+  "filters": {
+    "states": null,
+    "technologies": null,
+    "minCapacity": null,
+    "maxCapacity": null
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  }
+}
+```
+</ResponseExample>
+
+All MISO interconnection data follows the standardized response format with MISO-specific fields including seasonal capacity ratings and study cycle information.
+
+### MISO-Specific Fields
+
+| Field | Description |
+|-------|-------------|
+| `summer_capacity_mw` | Summer capacity rating (MW) |
+| `winter_capacity_mw` | Winter capacity rating (MW) |
+| `study_cycle` | Definitive Planning Phase cycle |
+| `study_group` | Study group assignment |
+
+<Note>
+**Data Updates**: MISO queue data is updated based on MISO's Generator Interconnection Queue reports.
+</Note>
+
+<Info>
+**Wind Focus**: MISO territory has significant wind resources, particularly in the upper Midwest states. Wind projects typically have seasonal capacity variations reflected in the summer/winter capacity fields.
+</Info>

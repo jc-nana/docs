@@ -1,0 +1,206 @@
+---
+title: 'Unified Projects'
+api: 'GET https://api.cleanview.co/api/v0/projects'
+description: 'Access unified project data combining EIA 860M and interconnection queue sources'
+---
+
+## Overview
+
+The unified projects endpoint provides a simplified, consolidated view of energy projects by combining data from multiple sources including EIA 860M and major grid operator interconnection queues. This endpoint standardizes project information across different data sources to provide a unified perspective on the energy project landscape.
+
+<Note>
+**Data Sources**: This endpoint combines data from EIA 860M (operating plants) and interconnection queues from major ISOs/RTOs (planned projects).
+</Note>
+
+## Endpoint
+
+<CodeGroup>
+```bash cURL
+curl -H "x-api-key: your_api_key_here" \
+  "https://api.cleanview.co/api/v0/projects?limit=50&technology=Solar&state=CA"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.cleanview.co/api/v0/projects?limit=50&technology=Solar&state=CA', {
+  headers: {
+    'x-api-key': 'your_api_key_here'
+  }
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {'x-api-key': 'your_api_key_here'}
+response = requests.get(
+    'https://api.cleanview.co/api/v0/projects?limit=50&technology=Solar&state=CA',
+    headers=headers
+)
+data = response.json()
+```
+</CodeGroup>
+
+## Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | 1000 | Number of records to return (50-5000) |
+| `offset` | integer | 0 | Number of records to skip |
+| `state` | string | - | Filter by state code (e.g., 'CA', 'TX', 'NY') |
+| `technology` | string | - | Filter by standardized technology type |
+| `status` | string | - | Filter by project status |
+| `sourceTable` | string | - | Filter by data source table |
+| `minCapacity` | number | - | Minimum capacity (MW) |
+| `maxCapacity` | number | - | Maximum capacity (MW) |
+| `balancingAuthority` | string | - | Filter by balancing authority code |
+
+### Technology Types
+
+Common standardized technology types:
+
+| Type | Description |
+|------|-------------|
+| `Solar` | Solar photovoltaic |
+| `Wind` | Wind turbine |
+| `Battery` | Battery energy storage |
+| `Natural Gas` | Natural gas generation |
+| `Biomass` | Biomass generation |
+| `Hydroelectric` | Hydroelectric |
+| `Geothermal` | Geothermal |
+| `Hybrid - Solar + Storage` | Combined solar and battery |
+
+### Project Status
+
+| Status | Description |
+|--------|-------------|
+| `Operating` | Currently operational |
+| `Planned` | Planned/permitted |
+| `Cancelled` | Cancelled/withdrawn |
+| `Retired` | Retired from service |
+
+### Data Sources
+
+Projects are sourced from:
+
+| Source | Description |
+|--------|-------------|
+| `eia_860m` | EIA 860M Monthly data (operating plants) |
+| `caiso_queue` | CAISO interconnection queue |
+| `ercot_queue` | ERCOT interconnection queue |
+| `pjm_queue` | PJM interconnection queue |
+| `miso_queue` | MISO interconnection queue |
+| `nyiso_queue` | NYISO interconnection queue |
+| `ne_iso_queue` | ISO-NE interconnection queue |
+| `spp_queue` | SPP interconnection queue |
+
+## Example Requests
+
+<AccordionGroup>
+  <Accordion title="Get Solar Projects in California">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/projects?technology=Solar&state=CA&limit=50"
+    ```
+  </Accordion>
+  
+  <Accordion title="Get Operating Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/projects?status=Operating&limit=50"
+    ```
+  </Accordion>
+  
+  <Accordion title="Get Large Projects (>100 MW)">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/projects?minCapacity=100&limit=50"
+    ```
+  </Accordion>
+  
+  <Accordion title="Get Projects from EIA Data Only">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/projects?sourceTable=eia_860m&limit=50"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Response Schema
+
+<ResponseExample>
+```json Example Response
+{
+  "data": [
+    {
+      "source_table": "eia_860m",
+      "source_id": "57472_CTG",
+      "project_name": "TBE-Montgomery LLC",
+      "capacity_mw": 12,
+      "operating_date": "2039-12-01",
+      "technology": "Biomass",
+      "county": "Orange",
+      "state": "NY",
+      "balancing_authority": "NYIS",
+      "status": "Planned"
+    },
+    {
+      "source_table": "caiso_queue",
+      "source_id": "2180_storage",
+      "project_name": "Cargo Storage",
+      "capacity_mw": 312.96,
+      "operating_date": "2036-05-05",
+      "technology": "Battery",
+      "county": "San Diego",
+      "state": "CA",
+      "balancing_authority": "CISO",
+      "status": "Planned"
+    }
+  ],
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 62222,
+    "hasMore": true,
+    "currentPage": 1,
+    "totalPages": 1245
+  },
+  "filters": {
+    "state": null,
+    "technology": null,
+    "status": "all",
+    "sourceTable": null,
+    "minCapacity": null,
+    "maxCapacity": null,
+    "balancingAuthority": null
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  }
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `source_table` | string | Source data table (eia_860m, caiso_queue, etc.) |
+| `source_id` | string | Unique identifier within source table |
+| `project_name` | string | Project or facility name |
+| `capacity_mw` | number | Capacity in megawatts |
+| `operating_date` | string | Operating or proposed online date (YYYY-MM-DD) |
+| `technology` | string | Standardized technology type |
+| `county` | string | County name |
+| `state` | string | State code (CA, TX, NY, etc.) |
+| `balancing_authority` | string | Balancing authority code |
+| `status` | string | Project status (Operating, Planned, Cancelled, Retired) |
+
+<Note>
+**Data Consolidation**: This endpoint provides a simplified view of complex energy project data. For detailed information, use the specific EIA 860M or interconnection queue endpoints.
+</Note>
+
+<Info>
+**Cross-Reference**: Projects may appear in multiple sources. The `source_table` and `source_id` fields help identify the original data source for each record.
+</Info>

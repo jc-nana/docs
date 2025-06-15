@@ -1,0 +1,334 @@
+---
+title: 'Interconnection Queues Reference'
+description: 'Comprehensive guide to ISO/RTO interconnection queue data, technology mappings, status codes, and field definitions.'
+---
+
+# Interconnection Queues Data Guide
+
+## Overview
+
+This API provides standardized access to interconnection queue data from all 7 major ISOs/RTOs in the United States. Each ISO has unique field structures and naming conventions, which our API standardizes into consistent field names and technology classifications.
+
+---
+
+## ISO/RTO Coverage
+
+### Major Regional Operators
+
+| ISO Code | Full Name | Geographic Coverage | States Served |
+| --- | --- | --- | --- |
+| **CISO** | California Independent System Operator | California and parts of Nevada | CA, NV |
+| **ERCO** | Electric Reliability Council of Texas | Most of Texas | TX |
+| **PJM** | PJM Interconnection | Mid-Atlantic and Midwest | DE, IL, IN, KY, MD, MI, NJ, NC, OH, PA, TN, VA, WV, DC |
+| **MISO** | Midcontinent Independent System Operator | Midwest and South | AR, IA, IL, IN, KY, LA, MI, MN, MO, MS, MT, ND, TX, WI |
+| **NYIS** | New York Independent System Operator | New York State | NY |
+| **ISNE** | ISO New England | New England | CT, MA, ME, NH, RI, VT |
+| **SWPP** | Southwest Power Pool | Central United States | AR, KS, LA, MO, NE, NM, OK, TX, portions of IA, MN, MT, ND, SD, WY |
+
+---
+
+## Technology Classifications
+
+### Standardized Technology Types
+
+Our API normalizes different ISO terminology into standardized categories:
+
+| Standard Technology | Description | Common ISO Variations |
+| --- | --- | --- |
+| **Solar** | Solar photovoltaic projects | Photovoltaic, Solar PV, PV, Solar |
+| **Wind** | Onshore and offshore wind | Wind Turbine, Wind, Onshore Wind, Offshore Wind |
+| **Battery** | Battery energy storage systems | Storage, Battery Storage, BESS, Energy Storage |
+| **Hybrid - Solar + Storage** | Co-located solar and battery | Solar + Storage, Hybrid Solar |
+| **Hybrid - Wind + Storage** | Co-located wind and battery | Wind + Storage, Hybrid Wind |
+| **Hybrid - Solar + Wind** | Co-located solar and wind | Solar + Wind |
+| **Natural Gas** | Natural gas generation | Gas, Combined Cycle, Simple Cycle, Combustion Turbine |
+| **Nuclear** | Nuclear power generation | Nuclear |
+| **Hydroelectric** | Hydroelectric generation | Hydro, Water, Hydroelectric |
+| **Geothermal** | Geothermal generation | Geothermal, Steam Turbine (Geothermal) |
+| **Biomass** | Biomass and biofuel generation | Biofuel, Wood, Landfill Gas |
+| **Coal** | Coal generation | Coal, Steam Turbine (Coal) |
+| **Other** | Other technologies | Fuel Cell, Hydrogen, Transmission |
+
+### Technology Distribution by ISO
+
+**CAISO (Top Technologies)**
+- Solar: ~1,200 projects
+- Battery: ~1,100 projects  
+- Wind: ~300 projects
+- Natural Gas: ~180 projects
+
+**ERCOT (Top Technologies)**
+- Solar: ~800 projects
+- Wind: ~400 projects
+- Battery: ~350 projects
+- Hybrid - Solar + Storage: ~200 projects
+
+**PJM (Top Technologies)**
+- Solar: ~600 projects
+- Natural Gas: ~300 projects
+- Wind: ~250 projects
+- Battery: ~200 projects
+
+---
+
+## Status Classifications
+
+### Standardized Status Types
+
+| Standard Status | Description | Common ISO Variations |
+| --- | --- | --- |
+| **Planned** | Active projects in interconnection process | Active, In Progress, Under Study |
+| **Operating** | Projects that have achieved commercial operation | Completed, Commercial, In Service |
+| **Cancelled** | Projects withdrawn or terminated | Withdrawn, Terminated, Cancelled |
+| **Retired** | Operating projects that have been retired | Retired, Decommissioned |
+| **Inactive** | Projects with suspended or unclear status | Suspended, On Hold, Inactive |
+
+### Status by ISO Examples
+
+**CAISO Status Mapping**
+- "Active" → **Planned**
+- "Completed" → **Operating**
+- "Withdrawn" → **Cancelled**
+
+**ERCOT Status Mapping**
+- "Active" → **Planned**
+- "COM" → **Operating** 
+- "WITHD" → **Cancelled**
+
+**PJM Status Mapping**
+- "Active" → **Planned**
+- "In Service" → **Operating**
+- "Withdrawn" → **Cancelled**
+
+---
+
+## Field Definitions
+
+### Core Standardized Fields
+
+| Field Name | Type | Description | Availability |
+| --- | --- | --- | --- |
+| `iso` | string | ISO/RTO identifier | All ISOs |
+| `queue_id` | string | Unique queue identifier | All ISOs |
+| `project_name` | string | Project name | Most ISOs |
+| `capacity_mw` | number | Project capacity in MW | All ISOs |
+| `technology` | string | Standardized technology type | All ISOs |
+| `status` | string | Standardized project status | All ISOs |
+| `operating_date` | date | Planned/actual commercial operation date | Most ISOs |
+| `request_date` | date | Date entered queue | Most ISOs |
+| `state` | string | State code (CA, TX, etc.) | Most ISOs |
+| `county` | string | County name | Most ISOs |
+
+### Study Status Fields
+
+| Field Name | Description | Primary ISOs |
+| --- | --- | --- |
+| `feasibility_study_status` | Feasibility study completion status | CAISO, PJM |
+| `system_impact_study_status` | System impact study status | CAISO, PJM, MISO |
+| `facilities_study_status` | Facilities study completion status | CAISO, PJM |
+| `interconnection_agreement_status` | Interconnection agreement execution status | CAISO, PJM |
+
+### ISO-Specific Fields
+
+**CAISO Unique Fields**
+- `deliverability_status`: Full Capacity, Energy Only, Partial Capacity
+- `voltage_kv`: Interconnection voltage level
+- `station_transmission_line`: Interconnection point details
+
+**ERCOT Unique Fields**
+- `interconnecting_entity`: Transmission utility
+- `poi_location`: Point of interconnection description
+- `cdr_reporting_zone`: ERCOT congestion zone
+- `gim_study_phase`: Generation Interconnection study phase
+
+**PJM Unique Fields**
+- `transmission_owner`: Transmission utility owner
+- `project_type`: Generation vs. Transmission project
+
+**MISO Unique Fields**
+- `study_cycle`: Definitive Planning Phase cycle
+- `study_group`: Study group assignment
+- `summer_capacity_mw` / `winter_capacity_mw`: Seasonal capacity ratings
+
+**NYISO Unique Fields**
+- `zone`: NYISO load zone (A-K)
+- `utility`: Transmission utility
+- `developer_interconnection_customer`: Developer/customer name
+
+**ISO-NE Unique Fields**
+- `neiso_developer`: Developer name
+- `data_source`: Source dataset (active, withdrawn, etc.)
+
+---
+
+## Capacity Statistics
+
+### Capacity Ranges by Technology
+
+| Technology | Typical Range (MW) | Average (MW) | Maximum Seen (MW) |
+| --- | --- | --- | --- |
+| **Utility Solar** | 20-500 | 156 | 3,000+ |
+| **Wind Farms** | 50-800 | 228 | 1,000+ |
+| **Battery Storage** | 10-300 | 87 | 400+ |
+| **Natural Gas** | 100-1,000 | 387 | 2,000+ |
+| **Distributed Solar** | 1-20 | 8 | 50 |
+
+### Project Size Distribution
+
+| Size Category | Capacity Range | Percentage of Projects |
+| --- | --- | --- |
+| **Small** | < 20 MW | ~40% |
+| **Medium** | 20-100 MW | ~35% |
+| **Large** | 100-500 MW | ~20% |
+| **Very Large** | > 500 MW | ~5% |
+
+---
+
+## Geographic Distribution
+
+### Top States by Project Count
+
+| State | Project Count | Top Technologies |
+| --- | --- | --- |
+| **California** | ~2,800 | Solar, Battery, Wind |
+| **Texas** | ~2,200 | Solar, Wind, Storage |
+| **Pennsylvania** | ~800 | Solar, Natural Gas |
+| **Illinois** | ~600 | Solar, Wind |
+| **New York** | ~400 | Solar, Wind, Storage |
+
+### Regional Characteristics
+
+**West Coast (CAISO)**
+- High solar and storage penetration
+- Strong deliverability requirements
+- Advanced study processes
+
+**Texas (ERCOT)**
+- Wind-heavy portfolio
+- Unique study phases (GIM)
+- Detailed location data
+
+**Northeast (PJM, NYISO, ISO-NE)**
+- Mixed technology portfolio
+- Transmission constraints
+- Detailed developer tracking
+
+**Midwest (MISO, SPP)**
+- Wind-dominated regions
+- Seasonal capacity ratings
+- Study group processes
+
+---
+
+## Data Quality Notes
+
+### Field Availability
+
+| ISO | Project Names | Coordinates | Developer Info | Study Status |
+| --- | --- | --- | --- | --- |
+| **CAISO** | ✅ Always | ❌ Not available | ❌ Limited | ✅ Detailed |
+| **ERCOT** | ✅ Always | ❌ Not available | ✅ Via entity field | ✅ Detailed |
+| **PJM** | ✅ Usually | ❌ Not available | ❌ Limited | ✅ Detailed |
+| **MISO** | ❌ Limited | ❌ Not available | ❌ Limited | ✅ Basic |
+| **NYISO** | ✅ Usually | ❌ Not available | ✅ Good | ✅ Basic |
+| **ISO-NE** | ✅ Usually | ❌ Not available | ✅ Good | ✅ Basic |
+| **SPP** | ❌ Limited | ❌ Not available | ❌ Limited | ✅ Basic |
+
+### Common Filtering Patterns
+
+#### By Technology
+```
+technology=Solar
+technologies=Solar,Wind,Battery
+```
+
+#### By Status  
+```
+status=Planned
+status=Operating
+```
+
+#### By Capacity
+```
+minCapacity=100
+maxCapacity=500
+```
+
+#### By Location
+```
+state=CA
+states=CA,TX,NY
+county=Los Angeles
+```
+
+#### By Timeline
+```
+codStart=2024-01-01
+codEnd=2025-12-31
+queueDateStart=2020-01-01
+```
+
+---
+
+## API Response Structure
+
+All interconnection endpoints return data in this standardized format:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "iso": "CISO",
+      "queue_id": "1379_photovoltaic", 
+      "project_name": "Heartland Solar 1",
+      "capacity_mw": 156.04,
+      "technology": "Solar",
+      "status": "Planned",
+      // ... additional fields
+    }
+  ],
+  "iso": "CISO",
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 3027,
+    "hasMore": true,
+    "currentPage": 1,
+    "totalPages": 61
+  },
+  "filters": {
+    // Applied filters
+  },
+  "customer": {
+    "id": "customer_id",
+    "name": "Customer Name"
+  }
+}
+```
+
+---
+
+## Usage Examples
+
+### Find Large Solar Projects in California
+```bash
+curl -H "x-api-key: your_api_key" \
+  "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar&minCapacity=100&state=CA&limit=50"
+```
+
+### Get Active Battery Storage Projects
+```bash
+curl -H "x-api-key: your_api_key" \
+  "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Battery&status=Planned&limit=50"
+```
+
+### Find Projects by Multiple Technologies
+```bash
+curl -H "x-api-key: your_api_key" \
+  "https://api.cleanview.co/api/v0/interconnection/pjm?technologies=Solar,Wind&limit=50"
+```
+
+<Tip>
+For optimal performance, use specific filters to narrow your results. The API works best with targeted queries rather than broad data exports.
+</Tip> 

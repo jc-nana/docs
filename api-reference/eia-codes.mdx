@@ -1,0 +1,219 @@
+---
+title: 'EIA Codes Reference'
+description: 'Standardized EIA 860M codes for balancing authorities, energy sources, and prime movers.'
+---
+
+# EIA codes documentation
+
+## EIA 860M Reference Codes
+
+This API uses standardized codes from the U.S. Energy Information Administration (EIA) to represent balancing authorities, energy sources, and prime movers.
+
+Use these codes to filter or interpret results in API responses.
+
+---
+
+### Example Queries
+
+- To find all **solar projects in CAISO**, filter using:
+  
+  `energy_source_code = "SUN"` and `balancing_authority_code = "CISO"`
+  
+- To find **planned combined cycle plants in ERCOT**, filter using:
+  
+  `prime_mover_code = "CC"` and `balancing_authority_code = "ERCO"`
+
+---
+
+## Balancing Authority Codes
+
+### Most common balancing authorities
+
+Below are the most common balancing authorities that represent the 7 major RTOs and ISOs in the US:
+
+| Code | Name |
+| --- | --- |
+| CISO | California Independent System Operator |
+| ERCO | Electric Reliability Council of Texas, Inc. |
+| MISO | Midcontinent Independent System Operator, Inc. |
+| ISNE | ISO New England Inc. |
+| NYIS | New York Independent System Operator |
+| PJM | PJM Interconnection, LLC |
+| SWPP | Southwest Power Pool |
+
+### All balancing authority codes
+
+| Code | Balancing authority name |
+| --- | --- |
+| AEC | PowerSouth Energy Cooperative |
+| AECI | Associated Electric Cooperative, Inc. |
+| AMPL | Anchorage Municipal Light & Power |
+| AVA | Avista Corporation |
+| AVRN | Avangrid Renewables LLC |
+| AZPS | Arizona Public Service Company |
+| BANC | Balancing Authority of Northern California |
+| BPAT | Bonneville Power Administration |
+| CEA | Chugach Electric Assn Inc |
+| CHPD | Public Utility District No. 1 of Chelan County |
+| CISO | California Independent System Operator |
+| CPLE | Duke Energy Progress East |
+| CPLW | Duke Energy Progress West |
+| CSTO | Constellation Energy Control and Dispatch, LLC |
+| DEAA | Arlington Valley, LLC - AVBA |
+| DOPD | PUD No. 1 of Douglas County |
+| DUK | Duke Energy Carolinas |
+| EEI | Electric Energy, Inc. |
+| EPE | El Paso Electric Company |
+| ERCO | Electric Reliability Council of Texas, Inc. |
+| FMPP | Florida Municipal Power Pool |
+| FPC | Duke Energy Florida Inc |
+| FPL | Florida Power & Light Company |
+| GCPD | Public Utility District No. 2 of Grant County, Washington |
+| GLHB | Gridforce Energy Management, LLC |
+| GRID | GridLiance |
+| GRIF | Griffith Energy, LLC |
+| GRIS | Gridforce South |
+| GVL | Gainesville Regional Utilities |
+| GWA | NaturEner Power Watch, LLC (GWA) |
+| HECO | Hawaiian Electric Co Inc |
+| HGMA | New Harquahala Generating Company, LLC - HGBA |
+| HST | City of Homestead |
+| IID | Imperial Irrigation District |
+| IPCO | Idaho Power Company |
+| ISNE | ISO New England Inc. |
+| JEA | JEA |
+| LDWP | Los Angeles Department of Water and Power |
+| LGEE | LG&E and KU Services Company as agent for Louisville Gas and Electric Company and Kentucky Utilities |
+| MISO | Midcontinent Independent Transmission System Operator, Inc. |
+| NA | No balancing authority |
+| NA - AK | No balancing authority - AK |
+| NA - HI | No balancing authority - HI |
+| NA - PR | No balancing authority - PR |
+| NBSO | New Brunswick System Operator |
+| NEVP | Nevada Power Company |
+| NSB | New Smyrna Beach, Utilities Commission of |
+| NWMT | NorthWestern Energy (NWMT) |
+| NYIS | New York Independent System Operator |
+| OVEC | Ohio Valley Electric Corporation |
+| PACE | PacifiCorp - East |
+| PACW | PacifiCorp - West |
+| PGE | Portland General Electric Company |
+| PJM | PJM Interconnection, LLC |
+| PNM | Public Service Company of New Mexico |
+| PSCO | Public Service Company of Colorado |
+| PSEI | Puget Sound Energy |
+| SC | South Carolina Public Service Authority |
+| SCEG | South Carolina Electric & Gas Company |
+| SCL | Seattle City Light |
+| SEC | Seminole Electric Cooperative |
+| SEPA | Southeastern Power Administration |
+| SOCO | Southern Company Services, Inc. - Trans |
+| SPA | Southwestern Power Administration |
+| SRP | Salt River Project |
+| SWPP | Southwest Power Pool |
+| TAL | City of Tallahassee |
+| TEC | Tampa Electric Company |
+| TEPC | Tucson Electric Power Company |
+| TIDC | Turlock Irrigation District |
+| TPWR | City of Tacoma, Department of Public Utilities, Light Division |
+| TVA | Tennessee Valley Authority |
+| WACM | Western Area Power Administration - Rocky Mountain Region |
+| WALC | Western Area Power Administration - Desert Southwest Region |
+| WAUW | Western Area Power Administration UGP West |
+| WWA | NaturEner Wind Watch, LLC |
+| YAD | Alcoa Power Generating, Inc. - Yadkin Division |
+
+## Energy Source Codes
+
+These codes represent the primary fuel or energy type used at a generating facility. The most commonly used codes are:
+
+| Code | Description |
+| --- | --- |
+| SUN | Solar |
+| WND | Wind |
+| MWH | Electricity used for energy storage (megawatt hour) |
+| NUC | Nuclear |
+| WAT | Water (Hydro) |
+| GEO | Geothermal |
+| NG | Natural gas |
+| ANT,BIT,LIG,SUB,WC,RC | All coal-related codes |
+
+### All energy sources codes
+
+Here is EIA’s full list of energy source codes and groupings:
+
+| **Group** | **Code** | **Description** |
+| --- | --- | --- |
+| **Fossil Fuels** |  |  |
+| Coal | ANT | Anthracite Coal |
+| Coal | BIT | Bituminous Coal |
+| Coal | LIG | Lignite Coal |
+| Coal | RC | Refined Coal (A coal product that is created when impurities and/or moisture are removed to improve heat content and reduce emissions. Includes any coal which meets the IRS definition of refined coal. Does not include coal processed by coal preparation plants.) |
+| Coal | SGC | Coal-Derived Synthesis Gas |
+| Coal | SUB | Subbituminous Coal |
+| Coal | WC | Waste/Other Coal (including anthracite culm, bituminous gob, fine coal, lignite waste, waste coal) |
+| Petroleum Products | DFO | Distillate Fuel Oil (including diesel, No. 1, No. 2, and No. 4 fuel oils) |
+| Petroleum Products | JF | Jet Fuel |
+| Petroleum Products | KER | Kerosene |
+| Petroleum Products | PC | Petroleum Coke |
+| Petroleum Products | PG | Propane, gaseous |
+| Petroleum Products | RFO | Residual Fuel Oil (including No. 5 and No. 6 fuel oils, and bunker C fuel oil) |
+| Petroleum Products | SGP | Petroleum Coke Derived Synthesis Gas |
+| Petroleum Products | WO | Waste/Other Oil (including crude oil, liquid butane, liquid propane, naphtha, oil waste, re-refined motor oil, sludge oil, tar oil, or other petroleum-based liquid wastes) |
+| Natural Gas and Other Fossil Gas | BFG | Blast Furnace Gas |
+| Natural Gas and Other Fossil Gas | NG | Natural Gas |
+| Natural Gas and Other Fossil Gas | OG | Other Gas |
+| **Renewable Fuels** |  |  |
+| Solid Renewable Fuels | AB | Agricultural By-products |
+| Solid Renewable Fuels | MSW | Municipal Solid Waste |
+| Solid Renewable Fuels | OBS | Other Biomass Solids |
+| Liquid Renewable (Biomass) Fuels | WDS | Wood/Wood Waste Solids (including paper pellets, railroad ties, utility poles, wood chips, bark, and wood waste solids) |
+| Liquid Renewable (Biomass) Fuels | BLQ | Black Liquor |
+| Liquid Renewable (Biomass) Fuels | OBL | Other Biomass Liquids |
+| Liquid Renewable (Biomass) Fuels | SLW | Sludge Waste |
+| Liquid Renewable (Biomass) Fuels | WDL | Wood Waste Liquids excluding Black Liquor (includes red liquor, sludge wood, spent sulfite liquor, and other wood-based liquids) |
+| Gaseous Renewable (Biomass) Fuels | LFG | Landfill Gas |
+| Gaseous Renewable (Biomass) Fuels | OBG | Other Biomass Gas (includes digester gas, methane, and other biomass gasses) |
+| **Renewables** |  |  |
+| All Other Renewable Fuels | GEO | Geothermal |
+| All Other Renewable Fuels | SUN | Solar |
+| All Other Renewable Fuels | WAT | Water at a Conventional Hydroelectric Turbine, and water used in Wave Buoy Hydrokinetic Technology, Current Hydrokinetic Technology, and Tidal Hydrokinetic Technology |
+| All Other Renewable Fuels | WND | Wind |
+| **All Other Fuels** |  |  |
+| All Other Fuels | H2 | Hydrogen |
+| All Other Fuels | MWH | Electricity used for energy storage |
+| All Other Fuels | NUC | Nuclear Uranium, Plutonium, Thorium |
+| All Other Fuels | PUR | Purchased Steam |
+| All Other Fuels | TDF | Tire-derived Fuels |
+| All Other Fuels | WAT | Pumping Energy for Reversible (Pumped Storage) Hydroelectric Turbine |
+| All Other Fuels | WH | Waste heat not directly attributed to a fuel source |
+| All Other Fuels | OTH | Other |
+
+### Prime Mover Codes
+
+Here is the full list of EIA prime mover codes:
+
+| Prime mover codes | Description |
+| --- | --- |
+| BA | Energy Storage, Battery |
+| BT | Turbines Used in a Binary Cycle (including those used for geothermal applications) |
+| CA | Combined-Cycle – Steam Part |
+| CE | Energy Storage, Compressed Air |
+| CP | Energy Storage, Concentrated Solar Power |
+| CS | Combined-Cycle Single-Shaft (Combustion Turbine and Steam Turbine share a single generator) |
+| CT | Combined-Cycle Combustion Turbine Part |
+| ES | Energy Storage, Other (Specify on Schedule 9, Comments) |
+| FC | Fuel Cell |
+| FW | Energy Storage, Flywheel |
+| GT | Combustion (Gas) Turbine (including Jet Engine design) |
+| HA | Hydrokinetic, Axial Flow Turbine |
+| HB | Hydrokinetic, Wave Buoy |
+| HK | Hydrokinetic, Other |
+| HY | Hydraulic Turbine (including turbines associated with delivery of water by pipeline) |
+| IC | Internal Combustion (diesel, piston, reciprocating) Engine |
+| PS | Energy Storage, Reversible Hydraulic Turbine (Pumped Storage) |
+| OT | Other |
+| ST | Steam Turbine (including Nuclear, Geothermal, and Solar Steam; excludes Combined Cycle) |
+| PV | Photovoltaic |
+| WT | Wind Turbine, Onshore |
+| WS | Wind Turbine, Offshore |

@@ -1,0 +1,233 @@
+---
+title: 'EIA 860M Data'
+api: 'GET https://api.cleanview.co/api/v0/eia-860m'
+description: 'Retrieve EIA 860M power plant data with detailed capacity, operational status, and location information'
+---
+
+## Overview
+
+The EIA 860M endpoint provides access to the U.S. Energy Information Administration's monthly electric generator inventory data. This dataset includes comprehensive information about power plants and generators across the United States, including renewable energy projects, traditional generation facilities, and energy storage systems.
+
+## Endpoint
+
+<CodeGroup>
+```bash cURL
+curl -H "x-api-key: your_api_key_here" \
+  "https://api.cleanview.co/api/v0/eia-860m?limit=50&state=CA&energySource=SUN"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.cleanview.co/api/v0/eia-860m?limit=50&state=CA&energySource=SUN', {
+  headers: {
+    'x-api-key': 'your_api_key_here'
+  }
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {'x-api-key': 'your_api_key_here'}
+response = requests.get(
+    'https://api.cleanview.co/api/v0/eia-860m?limit=50&state=CA&energySource=SUN',
+    headers=headers
+)
+data = response.json()
+```
+</CodeGroup>
+
+## Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | 1000 | Number of records to return (50-5000) |
+| `offset` | integer | 0 | Number of records to skip |
+| `state` | string | - | Filter by state code (e.g., 'CA', 'TX', 'NY') |
+| `energySource` | string | - | Filter by energy source code(s), comma-separated (e.g., 'SUN', 'WND', 'MWH') |
+| `balancingAuthority` | string | - | Filter by balancing authority code(s), comma-separated (e.g., 'CISO', 'ERCO', 'PJM') |
+| `status` | string | 'operating' | Filter by operational status |
+| `startYear` | integer | - | Minimum operating year |
+| `endYear` | integer | - | Maximum operating year |
+
+### Energy Source Codes
+
+The most common energy source codes in our dataset:
+
+| Code | Description | Count |
+|------|-------------|-------|
+| `NG` | Natural Gas | 9,742 |
+| `SUN` | Solar | 9,000 |
+| `DFO` | Distillate Fuel Oil (Diesel) | 5,517 |
+| `WAT` | Hydro | 4,598 |
+| `LFG` | Landfill Gas | 1,983 |
+| `WND` | Wind | 1,955 |
+| `MWH` | Battery Storage | 1,435 |
+| `BIT` | Bituminous Coal | 828 |
+| `SUB` | Subbituminous Coal | 463 |
+| `GEO` | Geothermal | 341 |
+
+### Balancing Authority Codes
+
+The most common balancing authorities in our dataset:
+
+| Code | Description | Count |
+|------|-------------|-------|
+| `MISO` | Midcontinent Independent System Operator | 6,404 |
+| `PJM` | PJM Interconnection | 5,370 |
+| `CISO` | California Independent System Operator | 3,738 |
+| `ERCO` | Electric Reliability Council of Texas | 2,850 |
+| `ISNE` | ISO New England | 2,694 |
+| `NYIS` | New York Independent System Operator | 2,303 |
+| `SWPP` | Southwest Power Pool | 2,126 |
+
+<Tip>
+Need the complete list of EIA codes? See our [EIA Codes Reference](/api-reference/eia-codes) for all balancing authorities, energy sources, and prime mover codes.
+</Tip>
+
+### Status Options
+
+| Status | Description |
+|--------|-------------|
+| `operating` | Currently operating facilities |
+| `retired` | Retired from service |
+| `planned` | Planned but not yet operating |
+| `canceled` | Cancelled projects |
+| `all` | All statuses |
+
+## Example Requests
+
+<AccordionGroup>
+  <Accordion title="Get Solar Projects in California">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/eia-860m?state=CA&energySource=SUN&limit=50"
+    ```
+    
+    Uses `energySource=SUN` for solar. See [all energy source codes](/api-reference/eia-codes#energy-source-codes).
+  </Accordion>
+  
+  <Accordion title="Get Large Wind Projects (>100 MW)">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/eia-860m?energySource=WND&limit=50"
+    ```
+    
+    Uses `energySource=WND` for wind. See [all energy source codes](/api-reference/eia-codes#energy-source-codes).
+  </Accordion>
+  
+  <Accordion title="Get Battery Storage Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/eia-860m?energySource=MWH&status=operating&limit=50"
+    ```
+    
+    Uses `energySource=MWH` for battery storage. See [all energy source codes](/api-reference/eia-codes#energy-source-codes).
+  </Accordion>
+  
+  <Accordion title="Get Projects by Multiple Balancing Authorities">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/eia-860m?balancingAuthority=CISO,ERCO&limit=50"
+    ```
+    
+    Uses `balancingAuthority=CISO,ERCO` for California ISO and ERCOT. See [all balancing authority codes](/api-reference/eia-codes#balancing-authority-codes).
+  </Accordion>
+</AccordionGroup>
+
+## Response Schema
+
+<ResponseExample>
+```json Example Response
+{
+  "success": true,
+  "data": [
+    {
+      "plant_id": "68524",
+      "plant_name": "Bishop Ranch - BR 15-AA",
+      "plant_state": "CA",
+      "county": "Contra Costa",
+      "latitude": 37.77538,
+      "longitude": -121.9613,
+      "entity_id": "66895",
+      "entity_name": "Alcosta Boulevard BR 15-AA Solar Project 2020 LLC",
+      "generator_id": "4654R",
+      "unit_code": null,
+      "nameplate_capacity_mw": 0.2,
+      "nameplate_energy_capacity_mwh": null,
+      "energy_source_code": "SUN",
+      "technology": "Solar Photovoltaic",
+      "prime_mover_code": "PV",
+      "status": "Operating",
+      "status_detailed": "(OP) Operating",
+      "operating_year": 2025,
+      "operating_month": "4",
+      "retirement_year": null,
+      "retirement_month": null,
+      "operating_date": "2025-04-01",
+      "retirement_date": null,
+      "balancing_authority_code": "CISO",
+      "sector": "IPP Non-CHP"
+    }
+  ],
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 1063,
+    "hasMore": true,
+    "currentPage": 1,
+    "totalPages": 22
+  },
+  "filters": {
+    "state": "CA",
+    "energySource": "SUN",
+    "balancingAuthority": null,
+    "status": "operating",
+    "startYear": null,
+    "endYear": null
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  }
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `plant_id` | string | Unique EIA plant identifier |
+| `plant_name` | string | Name of the power plant facility |
+| `plant_state` | string | Two-letter state code where plant is located |
+| `county` | string | County name where plant is located |
+| `latitude` | number | Plant latitude coordinate |
+| `longitude` | number | Plant longitude coordinate |
+| `entity_id` | string | EIA entity (utility/company) identifier |
+| `entity_name` | string | Name of utility or company operating the plant |
+| `generator_id` | string | Generator unit identifier within the plant |
+| `unit_code` | string | Additional unit identifier (if applicable) |
+| `nameplate_capacity_mw` | number | Nameplate capacity in megawatts (MW) |
+| `nameplate_energy_capacity_mwh` | number | Energy storage capacity in megawatt-hours (MWh) for storage units |
+| `energy_source_code` | string | Primary energy source code (SUN, WND, NG, etc.) |
+| `technology` | string | Technology description |
+| `prime_mover_code` | string | Prime mover technology code |
+| `status` | string | Operational status |
+| `status_detailed` | string | Detailed operational status with EIA codes |
+| `operating_year` | number | Year facility began/will begin operation |
+| `operating_month` | string | Month facility began/will begin operation |
+| `retirement_year` | number | Year facility retired/will retire (if applicable) |
+| `retirement_month` | number | Month facility retired/will retire (if applicable) |
+| `operating_date` | string | Operating date in YYYY-MM-DD format |
+| `retirement_date` | string | Retirement date in YYYY-MM-DD format (if applicable) |
+| `balancing_authority_code` | string | Balancing authority acronym |
+| `sector` | string | Sector classification |
+
+<Note>
+**Data Updates**: EIA 860M data is updated monthly by the U.S. Energy Information Administration. Our API reflects the most recent available data.
+</Note>
+
+<Info>
+**Rate Limits**: API requests are subject to rate limiting. For high-volume usage, consider implementing request batching and pagination.
+</Info>

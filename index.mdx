@@ -1,71 +1,87 @@
 ---
-title: Introduction
-description: "Welcome to the home of your new documentation"
+title: Welcome to Cleanview API
+description: "Access comprehensive renewable energy project data and interconnection queue information"
 ---
 
 <img
   className="block dark:hidden"
   src="/images/hero-light.png"
-  alt="Hero Light"
+  alt="Cleanview API"
 />
 <img
   className="hidden dark:block"
   src="/images/hero-dark.png"
-  alt="Hero Dark"
+  alt="Cleanview API"
 />
 
-## Setting up
+## Overview
 
-The first step to world-class documentation is setting up your editing environments.
+The Cleanview API provides secure, programmatic access to comprehensive renewable energy project data, including EIA records and interconnection queue information from major grid operators across the United States.
+
+**Current API Version:** v0 (Beta)  
+**Base URL:** `https://api.cleanview.energy/api/v0`  
+**Authentication:** API Key required
 
 <CardGroup cols={2}>
   <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
+    title="Quick Start"
+    icon="rocket"
+    href="/quickstart"
   >
-    Get your docs set up locally for easy development
+    Get your API key and make your first request in minutes
   </Card>
   <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
+    title="Authentication"
+    icon="key"
+    href="/authentication"
   >
-    Preview your changes before you push to make sure they're perfect
+    Learn how to authenticate your requests with API keys
   </Card>
 </CardGroup>
 
-## Make it yours
+## Available Data Sources
 
-Update your docs to your brand and add valuable content for the best user conversion.
+Access high-value renewable energy datasets through our REST API endpoints.
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="EIA 860M Data"
+    icon="database"
+    href="/api-reference/endpoint/eia-860m"
   >
-    Customize your docs to your company's colors and brands
+    Latest EIA 860M project records for planned and operating renewable energy projects
   </Card>
   <Card
-    title="Reference APIs"
+    title="Interconnection Queues"
+    icon="network-wired"
+    href="/api-reference/endpoint/ercot"
+  >
+    Real-time queue data from ERCOT, CAISO, PJM, MISO, SPP, NYISO, and ISO-NE
+  </Card>
+  <Card
+    title="Unified Projects"
+    icon="layer-group"
+    href="/api-reference/endpoint/projects"
+  >
+    Consolidated project database merging data from all sources
+  </Card>
+  <Card
+    title="API Reference"
     icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    href="/api-reference/introduction"
   >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
+    Complete endpoint documentation with request/response examples
   </Card>
 </CardGroup>
+
+## Key Features
+
+- **Comprehensive Coverage:** Access to 7 major grid operator interconnection queues
+- **Real-time Data:** Up-to-date project information and queue status
+- **Standardized Format:** Consistent API responses across all data sources  
+- **Secure Access:** API key authentication with usage tracking
+- **High Performance:** Sub-500ms response times for most endpoints
+
+<Note>
+**Beta Notice:** This API is currently in beta with manual approval for new customers. Contact our team to request access.
+</Note>

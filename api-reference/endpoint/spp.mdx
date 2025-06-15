@@ -1,0 +1,167 @@
+---
+title: 'SPP Interconnection Queue'
+api: 'GET https://api.cleanview.co/api/v0/interconnection/spp'
+description: 'Access real-time Southwest Power Pool interconnection queue data for renewable energy projects'
+---
+
+## Overview
+
+The SPP interconnection queue endpoint provides access to real-time data from Southwest Power Pool's interconnection queue. SPP serves the central United States with significant wind resources.
+
+<Note>
+**SPP Coverage**: Contains **800+ projects** across the central U.S. Top technologies: Wind (400+ projects), Solar (200+ projects), Battery Storage (100+ projects), Natural Gas (100+ projects).
+</Note>
+
+## Endpoint
+
+<CodeGroup>
+```bash cURL
+curl -H "x-api-key: your_api_key_here" \
+  "https://api.cleanview.co/api/v0/interconnection/spp?limit=50"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.cleanview.co/api/v0/interconnection/spp?limit=50', {
+  headers: {
+    'x-api-key': 'your_api_key_here'
+  }
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {'x-api-key': 'your_api_key_here'}
+response = requests.get(
+    'https://api.cleanview.co/api/v0/interconnection/spp?limit=50',
+    headers=headers
+)
+data = response.json()
+```
+</CodeGroup>
+
+## Coverage Area
+
+**States Served**: Arkansas, Kansas, Louisiana, Missouri, Nebraska, New Mexico, Oklahoma, and Texas, with portions of Iowa, Minnesota, Montana, North Dakota, South Dakota, and Wyoming.
+
+## Query Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | 1000 | Number of records to return (50-5000) |
+| `offset` | integer | 0 | Number of records to skip |
+| `state` | string | - | Filter by state code |
+| `states` | array | - | Filter by multiple states (comma-separated) |
+| `technology` | string | - | Filter by standardized technology type |
+| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `status` | string | - | Filter by standardized status |
+| `minCapacity` | number | - | Minimum capacity in MW |
+| `maxCapacity` | number | - | Maximum capacity in MW |
+| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+
+### Technology Distribution
+
+| Technology | Count | Description |
+|------------|-------|-------------|
+| `Wind` | 400+ | Wind turbine projects (dominant in SPP territory) |
+| `Solar` | 200+ | Solar photovoltaic projects |
+| `Battery` | 100+ | Battery energy storage systems |
+| `Natural Gas` | 100+ | Natural gas generation |
+| `Other` | 50+ | Other technologies |
+
+### Status Options
+
+| Status | Description |
+|--------|-------------|
+| `Planned` | Active projects in queue |
+| `Operating` | Commercial operation achieved |
+| `Cancelled` | Withdrawn or terminated |
+
+### Top States by Project Count
+
+| State | Project Count | Top Technology |
+|-------|---------------|----------------|
+| Kansas | ~200 | Wind |
+| Oklahoma | ~150 | Wind, Solar |
+| Texas | ~120 | Wind, Solar |
+| Nebraska | ~100 | Wind |
+| New Mexico | ~80 | Solar, Wind |
+
+## Example Requests
+
+<AccordionGroup>
+  <Accordion title="Get Wind Projects in Kansas">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/spp?technology=Wind&state=KS&limit=50"
+    ```
+  </Accordion>
+  
+  <Accordion title="Get Large Solar Projects (>100 MW)">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/spp?technology=Solar&minCapacity=100&limit=50"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Response Schema
+
+<ResponseExample>
+```json Example Response
+{
+  "data": [
+    {
+      "iso": "SWPP",
+      "queue_id": "GEN-2023-045",
+      "project_name": "SPP Project",
+      "capacity_mw": 300.0,
+      "technology": "Wind",
+      "fuel": "Wind",
+      "status": "Planned",
+      "detailed_status": "Active",
+      "operating_date": "2025-11-01T00:00:00.000Z",
+      "request_date": "2023-03-20T00:00:00.000Z",
+      "county": "Barber",
+      "state": "KS",
+      "queue_position": "GEN-2023-045",
+      "interconnecting_entity": null,
+      "developer": null,
+      "balancing_authority_code": "SPP",
+      "technology_normalized": "Wind"
+    }
+  ],
+  "iso": "SPP",
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 834,
+    "hasMore": true,
+    "currentPage": 1,
+    "totalPages": 17
+  },
+  "filters": {
+    "states": null,
+    "technologies": null,
+    "minCapacity": null,
+    "maxCapacity": null
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  }
+}
+```
+</ResponseExample>
+
+All SPP interconnection data follows the standardized response format with core fields for project identification, capacity, technology, and status.
+
+<Note>
+**Data Updates**: SPP queue data is updated based on Southwest Power Pool's Generation Interconnection queue reports.
+</Note>
+
+<Info>
+**Wind Capital**: SPP territory includes some of the best wind resources in North America, particularly in Kansas, Oklahoma, and the Texas Panhandle. Wind projects dominate the interconnection queue.
+</Info>
