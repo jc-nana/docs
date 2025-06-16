@@ -51,16 +51,20 @@ data = response.json()
 |-----------|------|---------|-------------|
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code (MA, CT, ME, etc.) |
-| `states` | array | - | Filter by multiple states (comma-separated) |
-| `technology` | string | - | Filter by standardized technology type |
-| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `state` | string | - | Filter by state code (MA, CT, ME, etc.) - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
-| `minCapacity` | number | - | Minimum capacity in MW |
-| `maxCapacity` | number | - | Maximum capacity in MW |
+| `min_capacity` | number | - | Minimum capacity in MW |
+| `max_capacity` | number | - | Maximum capacity in MW |
+| `county` | string | - | Filter by county name (partial match) |
+| `developer` | string | - | Filter by developer name (partial match) |
+| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
+| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
+| `loadZone` | string | - | Filter by load zone |
 | `dataSource` | string | - | Filter by data source (active, withdrawn, etc.) |
-| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
 
 ### Technology Distribution
 
@@ -97,7 +101,7 @@ data = response.json()
   <Accordion title="Get Offshore Wind Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/iso-ne?technology=Wind&minCapacity=400&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/iso-ne?technology=Wind&min_capacity=400&limit=50"
     ```
   </Accordion>
   
@@ -114,47 +118,89 @@ data = response.json()
 <ResponseExample>
 ```json Example Response
 {
+  "iso": "ISNE",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 312,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 7
+  },
+  "filters": {
+    "state": null,
+    "states": null,
+    "technology": null,
+    "technologies": null,
+    "status": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "data_source": null,
+    "cod_start": null,
+    "cod_end": null
+  },
   "data": [
     {
       "iso": "ISNE",
       "queue_id": "1000_solar_battery_req20200409_MA_barnstable_poieversource_harwich_968",
-      "project_name": "Solar + battery",
-      "capacity_mw": 3.150000095367432,
-      "technology": "G",
+      "project_name": "Cape Cod Solar + Battery",
+      "capacity_mw": 3.15,
+      "technology": "Hybrid - Solar + Storage",
       "fuel": "SUN BAT",
       "status": "Planned",
-      "detailed_status": null,
-      "operating_date": "2023-11-30T00:00:00.000Z",
+      "detailed_status": "Active",
+      "operating_date": "2025-11-30T00:00:00.000Z",
       "request_date": "2020-04-09T00:00:00.000Z",
       "county": "Barnstable",
       "state": "MA",
       "queue_position": "1000",
-      "neiso_developer": null,
-      "developer": null,
+      "neiso_developer": "Cape Light Compact",
+      "developer": "Cape Light Compact",
       "data_source": "active",
       "balancing_authority_code": "NEISO",
       "technology_normalized": "Hybrid - Solar + Storage"
+    },
+    {
+      "iso": "ISNE",
+      "queue_id": "2023_offshore_wind_vineyard_MA_001",
+      "project_name": "Vineyard Wind 1",
+      "capacity_mw": 800.0,
+      "technology": "Wind",
+      "fuel": "WND",
+      "status": "Operating",
+      "detailed_status": "In Service",
+      "operating_date": "2023-11-01T00:00:00.000Z",
+      "request_date": "2018-05-15T00:00:00.000Z",
+      "county": "Dukes",
+      "state": "MA",
+      "queue_position": "2018-001",
+      "neiso_developer": "Vineyard Wind LLC",
+      "developer": "Avangrid Renewables",
+      "data_source": "active",
+      "balancing_authority_code": "NEISO",
+      "technology_normalized": "Wind"
+    },
+    {
+      "iso": "ISNE",
+      "queue_id": "2024_solar_vermont_green_mountain_125",
+      "project_name": "Green Mountain Solar",
+      "capacity_mw": 50.0,
+      "technology": "Solar",
+      "fuel": "SUN",
+      "status": "Planned",
+      "detailed_status": "Active",
+      "operating_date": "2025-09-15T00:00:00.000Z",
+      "request_date": "2024-01-10T00:00:00.000Z",
+      "county": "Rutland",
+      "state": "VT",
+      "queue_position": "2024-005",
+      "neiso_developer": "Vermont Solar LLC",
+      "developer": "SunPower Corporation",
+      "data_source": "active",
+      "balancing_authority_code": "NEISO",
+      "technology_normalized": "Solar"
     }
-  ],
-  "iso": "ISO-NE",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 312,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 7
-  },
-  "filters": {
-    "states": null,
-    "technologies": null,
-    "minCapacity": null,
-    "maxCapacity": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>

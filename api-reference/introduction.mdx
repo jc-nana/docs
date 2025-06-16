@@ -7,18 +7,32 @@ description: 'Complete reference for all Cleanview API endpoints'
 
 All API requests should be made to:
 ```
-https://api.cleanview.energy/api/v0
+https://api.cleanview.co/api/v0
 ```
 
 ## Authentication
 
-All endpoints require authentication using an API key in the Authorization header:
+All endpoints require authentication using an API key in the x-api-key header:
 
 ```bash
-Authorization: Bearer cv_pub_your_api_key_here
+x-api-key: cv_pub_your_api_key_here
 ```
 
 See the [Authentication guide](/authentication) for detailed information on obtaining and using API keys.
+
+## Try It Out
+
+You can test API endpoints directly in this documentation using the **"Try It"** feature:
+
+1. Navigate to any endpoint page (e.g., [EIA 860M](/api-reference/endpoint/eia-860m))
+2. Click the **"Authorize"** button or lock icon 🔒
+3. Enter your API key in the format: `cv_pub_your_api_key_here`
+4. Set your desired parameters
+5. Click **"Send Request"** to test the endpoint live
+
+<Tip>
+**Need an API key?** [Visit our demo page](https://cleanview.co/demo) to get started with a free API key for testing.
+</Tip>
 
 ## Response Format
 
@@ -27,18 +41,23 @@ All API responses follow a consistent structure:
 ```json
 {
   "success": true,
-  "data": [...],
-  "error": null,
-  "message": null,
-  "metadata": {
-    "total": 1000,
+  "summary": {
     "limit": 50,
-    "offset": 0
+    "offset": 0,
+    "total_results": 1000,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 20
   },
-  "pagination": {
-    "next": "https://api.cleanview.energy/api/v0/endpoint?limit=50&offset=50",
-    "previous": null
-  }
+  "filters": {
+    "state": "CA",
+    "technology": "Solar"
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  },
+  "data": [...]
 }
 ```
 
@@ -47,11 +66,10 @@ All API responses follow a consistent structure:
 | Field | Type | Description |
 |-------|------|-------------|
 | `success` | boolean | Indicates if the request was successful |
+| `summary` | object | Pagination and result summary information |
+| `filters` | object | Applied filters for the request |
+| `customer` | object | Customer information for the API key |
 | `data` | array/object | The requested data |
-| `error` | string | Error code if the request failed |
-| `message` | string | Human-readable error message |
-| `metadata` | object | Information about the dataset and pagination |
-| `pagination` | object | Links to next/previous pages |
 
 ## Error Handling
 
@@ -59,12 +77,8 @@ When a request fails, the API returns an appropriate HTTP status code and error 
 
 ```json
 {
-  "success": false,
-  "data": null,
   "error": "INVALID_API_KEY",
-  "message": "The provided API key is invalid or has been revoked",
-  "metadata": null,
-  "pagination": null
+  "message": "The provided API key is invalid or has been revoked"
 }
 ```
 
@@ -74,18 +88,18 @@ When a request fails, the API returns an appropriate HTTP status code and error 
 |------------|-------------|------------- |
 | `API_KEY_MISSING` | 401 | No API key provided |
 | `INVALID_API_KEY` | 401 | Invalid or revoked API key |
-| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
-| `INVALID_PARAMETER` | 400 | Invalid query parameter |
+| `INVALID_LIMIT` | 400 | Invalid limit parameter (must be 50-5000) |
+| `INVALID_OFFSET` | 400 | Invalid offset parameter |
 | `INTERNAL_ERROR` | 500 | Server error |
 
 ## Pagination
 
 All list endpoints support pagination using `limit` and `offset` parameters:
 
-| Parameter | Type | Default | Max | Description |
-|-----------|------|---------|-----|-------------|
-| `limit` | integer | 50 | 3000 | Number of records to return |
-| `offset` | integer | 0 | N/A | Number of records to skip |
+| Parameter | Type | Default | Range | Description |
+|-----------|------|---------|-------|-------------|
+| `limit` | integer | 1000 | 50-5000 | Number of records to return |
+| `offset` | integer | 0 | ≥0 | Number of records to skip |
 
 **Example:**
 ```

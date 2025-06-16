@@ -47,18 +47,20 @@ data = response.json()
 |-----------|------|---------|-------------|
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code (CA, NV, AZ) |
-| `technology` | string | - | Filter by standardized technology type |
-| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `state` | string | - | Filter by state code (CA, NV, AZ) - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
-| `minCapacity` | number | - | Minimum capacity in MW |
-| `maxCapacity` | number | - | Maximum capacity in MW |
+| `min_capacity` | number | - | Minimum capacity in MW |
+| `max_capacity` | number | - | Maximum capacity in MW |
 | `county` | string | - | Filter by county name (partial match) |
-| `deliverabilityStatus` | string | - | CAISO deliverability status |
-| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
-| `queueDateStart` | date | - | Queue entry date start (YYYY-MM-DD) |
-| `queueDateEnd` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `developer` | string | - | Filter by developer name (partial match) |
+| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
+| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
+| `study_phase` | string | - | Filter by study phase (feasibility, systemImpact, facilities) |
+| `voltage` | number | - | Filter by voltage level (kV) |
 
 ### Technology Options
 
@@ -83,13 +85,13 @@ Use standardized technology names for consistent filtering. See our [Interconnec
 | `Operating` | 800+ | Commercial operation achieved |
 | `Cancelled` | 400+ | Withdrawn or terminated |
 
-### Deliverability Status (CAISO-Specific)
+### Study Phase Options (CAISO-Specific)
 
-| Status | Description |
-|--------|-------------|
-| `Full Capacity` | Full capacity deliverability |
-| `Energy Only` | Energy-only deliverability |
-| `Partial Capacity` | Partial capacity deliverability |
+| Phase | Description |
+|-------|-------------|
+| `feasibility` | Feasibility study phase |
+| `systemImpact` | System impact study phase |
+| `facilities` | Facilities study phase |
 
 ## Example Requests
 
@@ -106,28 +108,28 @@ Use standardized technology names for consistent filtering. See our [Interconnec
   <Accordion title="Get Large Battery Storage Projects (>100 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Battery&minCapacity=100&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Battery&min_capacity=100&limit=50"
     ```
     
     Finds large-scale battery storage projects. Uses `technology=Battery` for energy storage systems.
   </Accordion>
   
-  <Accordion title="Get Projects with Full Capacity Deliverability">
+  <Accordion title="Get Projects in Feasibility Study Phase">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?deliverabilityStatus=Full Capacity&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/caiso?study_phase=feasibility&limit=50"
     ```
     
-    Filters for projects with full capacity deliverability status (CAISO-specific feature).
+    Filters for projects in the feasibility study phase (CAISO-specific feature).
   </Accordion>
   
   <Accordion title="Get Projects by Multiple Technologies">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?technologies=Solar,Wind,Battery&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar,Wind,Battery&limit=50"
     ```
     
-    Uses `technologies` parameter for multiple technology filtering.
+    Uses comma-separated values for multiple technology filtering.
   </Accordion>
 </AccordionGroup>
 
@@ -136,59 +138,55 @@ Use standardized technology names for consistent filtering. See our [Interconnec
 <ResponseExample>
 ```json Example Response
 {
+  "iso": "CAISO",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 3027,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 61
+  },
+  "filters": {
+    "state": null,
+    "technology": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "operating_date_range_start": null,
+    "operating_date_range_end": null,
+    "queue_date_start": null,
+    "queue_date_end": null
+  },
   "data": [
     {
       "iso": "CISO",
-      "queue_id": "1379_photovoltaic",
-      "project_name": "Heartland Solar 1",
-      "capacity_mw": 156.04,
-      "technology": "Photovoltaic",
-      "technology_normalized": "Solar",
-      "fuel": "Solar",
-      "status": "Planned",
-      "detailed_status": "Active",
-      "operating_date": "2021-09-01T00:00:00.000Z",
-      "request_date": "2017-05-01T00:00:00.000Z",
+      "queue_id": "1000_combined_cycle",
+      "project_name": "Heca Scs",
+      "capacity_mw": 300,
+      "technology": "Combined Cycle",
+      "technology_normalized": "Natural Gas",
+      "fuel": "Other",
+      "status": "Cancelled",
+      "detailed_status": "Withdrawn",
+      "operating_date": "2019-01-01T00:00:00.000Z",
+      "request_date": "2013-05-01T00:00:00.000Z",
       "state": "CA",
-      "county": "Fresno",
-      "queue_position": "1379",
+      "county": "Kern",
+      "queue_position": "1000",
       "interconnecting_entity": null,
       "developer": null,
       "feasibility_study_status": null,
       "system_impact_study_status": "Complete",
-      "facilities_study_status": "Complete",
+      "facilities_study_status": null,
       "optional_study_status": null,
-      "interconnection_agreement_status": "Executed",
+      "interconnection_agreement_status": null,
       "deliverability_status": "Full Capacity",
-      "voltage_kv": 230,
+      "voltage_kv": null,
       "station_transmission_line": "Midway-Wheeler Ridge 230 kV Line",
       "study_area": null,
-      "balancing_authority_code": "CISO"
+      "balancing_authority_code": "PGAE"
     }
-  ],
-  "iso": "CAISO",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 3027,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 61
-  },
-  "filters": {
-    "states": null,
-    "technologies": null,
-    "minCapacity": null,
-    "maxCapacity": null,
-    "codStart": null,
-    "codEnd": null,
-    "queueDateStart": null,
-    "queueDateEnd": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>

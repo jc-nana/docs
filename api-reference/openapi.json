@@ -1,54 +1,424 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Cleanview Public API",
+    "version": "0.1.0",
+    "description": "RESTful API for accessing clean energy data including EIA capacity and ISO queue information",
+    "contact": {
+      "name": "Cleanview Energy",
+      "url": "https://cleanview.co/demo"
+    }
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.cleanview.co/api/v0",
+      "description": "Production server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API key authentication using x-api-key header"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "Standardized error response structure",
+        "required": ["error", "message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error code identifier for programmatic handling",
+            "enum": [
+              "INVALID_API_KEY",
+              "API_KEY_NOT_FOUND",
+              "INVALID_LIMIT",
+              "INVALID_OFFSET",
+              "INVALID_STATUS",
+              "INVALID_CAPACITY",
+              "INVALID_TECHNOLOGY",
+              "INVALID_STATES",
+              "INVALID_DATE",
+              "INVALID_DATE_RANGE",
+              "INVALID_BOOLEAN",
+              "DATABASE_ERROR",
+              "INTERNAL_ERROR"
+            ],
+            "example": "INVALID_LIMIT"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error description",
+            "example": "Limit must be at least 50 records per request"
+          }
+        }
+      },
+      "Summary": {
+        "type": "object",
+        "description": "Summary metadata for pagination",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Number of records per page"
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of records to skip"
+          },
+          "total_results": {
+            "type": "integer",
+            "description": "Total number of records matching the query"
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "Whether additional records exist beyond this page"
+          },
+          "current_page": {
+            "type": "integer",
+            "description": "Current page number (1-indexed)"
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages available"
+          }
+        }
+      },
+      "EiaPlant": {
+        "type": "object",
+        "description": "EIA 860M power plant record",
+        "properties": {
+          "plant_id": {
+            "type": "string",
+            "description": "Unique plant identifier from EIA"
+          },
+          "plant_name": {
+            "type": "string",
+            "description": "Official plant name"
+          },
+          "plant_state": {
+            "type": "string",
+            "description": "State code where plant is located"
+          },
+          "county": {
+            "type": "string",
+            "description": "County where plant is located"
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true,
+            "description": "Plant latitude coordinate"
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true,
+            "description": "Plant longitude coordinate"
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "EIA entity (utility/company) identifier"
+          },
+          "entity_name": {
+            "type": "string",
+            "description": "Name of utility or company operating the plant"
+          },
+          "generator_id": {
+            "type": "string",
+            "description": "Generator unit identifier within the plant"
+          },
+          "nameplate_capacity_mw": {
+            "type": "number",
+            "description": "Nameplate capacity in megawatts (MW)"
+          },
+          "nameplate_energy_capacity_mwh": {
+            "type": "number",
+            "nullable": true,
+            "description": "Energy storage capacity in megawatt-hours (MWh) for storage units"
+          },
+          "energy_source_code": {
+            "type": "string",
+            "description": "Primary energy source code (SUN=Solar, WND=Wind, NG=Natural Gas, etc.)"
+          },
+          "technology": {
+            "type": "string",
+            "description": "Technology description (e.g., Photovoltaic, Onshore Wind Turbine)"
+          },
+          "prime_mover_code": {
+            "type": "string",
+            "description": "Prime mover technology code (PV=Photovoltaic, WT=Wind Turbine, etc.)"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current operational status (Operating, Retired, Planned, etc.)"
+          },
+          "operating_year": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Year the unit began commercial operation"
+          },
+          "operating_month": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Month the unit began commercial operation (1-12)"
+          },
+          "operating_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Formatted operating date (YYYY-MM-DD or YYYY-MM)"
+          },
+          "balancing_authority_code": {
+            "type": "string",
+            "description": "Balancing authority responsible for the plant (CISO, ERCO, PJM, etc.)"
+          },
+          "sector": {
+            "type": "string",
+            "description": "Sector classification (Electric Utility, Independent Power Producer, etc.)"
+          }
+        }
+      },
+      "UnifiedProject": {
+        "type": "object",
+        "properties": {
+          "source_table": {
+            "type": "string",
+            "description": "Source data table (eia_860m, caiso_queue, ercot_queue, etc.)"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Unique identifier within source table"
+          },
+          "project_name": {
+            "type": "string",
+            "description": "Project or facility name"
+          },
+          "capacity_mw": {
+            "type": "number",
+            "nullable": true,
+            "description": "Capacity in megawatts"
+          },
+          "operating_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Operating or proposed online date"
+          },
+          "technology": {
+            "type": "string",
+            "nullable": true,
+            "description": "Technology type (Solar, Wind, Battery, Natural Gas, etc.)"
+          },
+          "county": {
+            "type": "string",
+            "nullable": true,
+            "description": "County name"
+          },
+          "state": {
+            "type": "string",
+            "nullable": true,
+            "description": "State code (CA, TX, NY, etc.)"
+          },
+          "balancing_authority": {
+            "type": "string",
+            "nullable": true,
+            "description": "Balancing authority code (CISO, ERCO, PJM, etc.)"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "Project status (Operating, Planned, Cancelled, Retired)"
+          }
+        }
+      }
+    }
+  },
   "security": [
     {
-      "bearerAuth": []
+      "ApiKeyAuth": []
     }
   ],
   "paths": {
-    "/plants": {
+    "/health": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "summary": "Health check endpoint",
+        "description": "Check if the API service is running and healthy",
+        "tags": ["Health"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "service": {
+                      "type": "string",
+                      "example": "cleanview-api"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "v0"
+                    },
+                    "environment": {
+                      "type": "string",
+                      "example": "production"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/eia-860m": {
+      "get": {
+        "summary": "Get EIA 860M data",
+        "description": "Retrieve EIA plant capacity data with filtering and pagination",
+        "tags": ["EIA Data"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
-            "name": "limit",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code (e.g., CA, TX, NY)",
+            "example": "CA"
+          },
+          {
+            "in": "query",
+            "name": "energy_source",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by energy source code(s). Multiple codes separated by comma",
+            "example": "SUN,WND"
+          },
+          {
+            "in": "query",
+            "name": "balancing_authority",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by balancing authority acronym(s). Multiple codes separated by comma",
+            "example": "CISO,MISO"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": ["operating", "retired", "planned", "canceled", "all"],
+              "default": "operating"
+            },
+            "description": "Filter by plant status"
+          },
+          {
+            "in": "query",
+            "name": "start_year",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by minimum operating year",
+            "example": 2020
+          },
+          {
+            "in": "query",
+            "name": "end_year",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by maximum operating year",
+            "example": 2023
+          },
+          {
+            "in": "query",
+            "name": "limit",
             "schema": {
               "type": "integer",
-              "format": "int32"
-            }
+              "default": 1000,
+              "minimum": 50,
+              "maximum": 5000
+            },
+            "description": "Number of records to return (optimized range 50-5000)"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Successful response with EIA 860M power plant data",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "required": ["success", "data", "summary", "filters", "customer"],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Always true for successful responses",
+                      "example": true
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "customer": {
+                      "type": "object",
+                      "description": "Customer information for the API key",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "test_user_001"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Test Developer"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of EIA 860M power plant records",
+                      "items": {
+                        "$ref": "#/components/schemas/EiaPlant"
+                      }
+                    }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
+            "description": "Invalid request parameters",
             "content": {
               "application/json": {
                 "schema": {
@@ -56,35 +426,19 @@
                 }
               }
             }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,28 +450,303 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/projects": {
+      "get": {
+        "summary": "Get merged energy projects data",
+        "description": "Retrieve a merged view of operating, planned, cancelled or retired projects from EIA 860M and ISO/RTO interconnection queues",
+        "tags": ["Projects"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
+            "in": "query",
+            "name": "limit",
             "schema": {
               "type": "integer",
-              "format": "int64"
-            }
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 1000
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code (e.g., CA, TX, NY)"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type (Solar, Wind, Battery, etc.)"
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project status (Operating, Planned, Cancelled, Retired)"
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by data source (eia_860m, caiso_queue, ercot_queue, etc.)"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW"
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW"
+          },
+          {
+            "in": "query",
+            "name": "balancing_authority",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by balancing authority"
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "summary", "filters", "customer", "data"],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Always true for successful responses",
+                      "example": true
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "customer": {
+                      "type": "object",
+                      "description": "Customer information for the API key",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UnifiedProject"
+                      },
+                      "description": "Array of merged project records"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/interconnection/caiso": {
+      "get": {
+        "summary": "Get CAISO interconnection queue data",
+        "description": "Retrieve real-time interconnection queue data from the California Independent System Operator (CAISO)",
+        "tags": ["Interconnection"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 50
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code (CA, NV, AZ)",
+            "example": "CA"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type",
+            "example": "Solar"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW",
+            "example": 100
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW",
+            "example": 500
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with CAISO interconnection queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "iso": {
+                      "type": "string",
+                      "example": "CAISO"
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of interconnection queue records",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "iso": {
+                            "type": "string",
+                            "example": "CISO"
+                          },
+                          "queue_id": {
+                            "type": "string",
+                            "example": "1379_photovoltaic"
+                          },
+                          "project_name": {
+                            "type": "string",
+                            "example": "Sample Solar Project"
+                          },
+                          "capacity_mw": {
+                            "type": "number",
+                            "example": 156.04
+                          },
+                          "technology": {
+                            "type": "string",
+                            "example": "Solar"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "Planned"
+                          },
+                          "state": {
+                            "type": "string",
+                            "example": "CA"
+                          },
+                          "county": {
+                            "type": "string",
+                            "example": "Fresno"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -128,89 +757,660 @@
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
+    },
+    "/interconnection/ercot": {
+      "get": {
+        "summary": "Get ERCOT interconnection queue data",
+        "description": "Retrieve real-time interconnection queue data from the Electric Reliability Council of Texas (ERCOT)",
+        "tags": ["Interconnection"],
+        "security": [
+          {
+            "ApiKeyAuth": []
           }
-        },
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 50
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code (TX)",
+            "example": "TX"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type",
+            "example": "Solar"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW",
+            "example": 100
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW",
+            "example": 500
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+            "description": "Successful response with ERCOT interconnection queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "iso": {
+                      "type": "string",
+                      "example": "ERCOT"
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of interconnection queue records",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
               }
             }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
           },
-          "message": {
-            "type": "string"
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/interconnection/pjm": {
+      "get": {
+        "summary": "Get PJM interconnection queue data",
+        "description": "Retrieve real-time interconnection queue data from PJM Interconnection",
+        "tags": ["Interconnection"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 50
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code",
+            "example": "PA"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type",
+            "example": "Solar"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW"
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with PJM interconnection queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "iso": {
+                      "type": "string",
+                      "example": "PJM"
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of interconnection queue records",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/interconnection/miso": {
+      "get": {
+        "summary": "Get MISO interconnection queue data",
+        "description": "Retrieve real-time interconnection queue data from Midcontinent Independent System Operator (MISO)",
+        "tags": ["Interconnection"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 50
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW"
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with MISO interconnection queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "iso": {
+                      "type": "string",
+                      "example": "MISO"
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of interconnection queue records",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/interconnection/nyiso": {
+      "get": {
+        "summary": "Get NYISO interconnection queue data",
+        "description": "Retrieve real-time interconnection queue data from New York Independent System Operator (NYISO)",
+        "tags": ["Interconnection"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 50
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code (NY)",
+            "example": "NY"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW"
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with NYISO interconnection queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "iso": {
+                      "type": "string",
+                      "example": "NYISO"
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of interconnection queue records",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/interconnection/iso-ne": {
+      "get": {
+        "summary": "Get ISO-NE interconnection queue data",
+        "description": "Retrieve real-time interconnection queue data from ISO New England",
+        "tags": ["Interconnection"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 50
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW"
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with ISO-NE interconnection queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "iso": {
+                      "type": "string",
+                      "example": "ISO-NE"
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of interconnection queue records",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/interconnection/spp": {
+      "get": {
+        "summary": "Get SPP interconnection queue data",
+        "description": "Retrieve real-time interconnection queue data from Southwest Power Pool (SPP)",
+        "tags": ["Interconnection"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 5000,
+              "default": 50
+            },
+            "description": "Number of records to return"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by state code"
+          },
+          {
+            "in": "query",
+            "name": "technology",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by technology type"
+          },
+          {
+            "in": "query",
+            "name": "min_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum capacity in MW"
+          },
+          {
+            "in": "query",
+            "name": "max_capacity",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Maximum capacity in MW"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with SPP interconnection queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "iso": {
+                      "type": "string",
+                      "example": "SPP"
+                    },
+                    "summary": {
+                      "$ref": "#/components/schemas/Summary"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "description": "Applied filters for the request"
+                    },
+                    "data": {
+                      "type": "array",
+                      "description": "Array of interconnection queue records",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
       }
     }
   }

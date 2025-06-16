@@ -51,16 +51,22 @@ data = response.json()
 |-----------|------|---------|-------------|
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code |
-| `states` | array | - | Filter by multiple states (comma-separated) |
-| `technology` | string | - | Filter by standardized technology type |
-| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `state` | string | - | Filter by state code - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
-| `minCapacity` | number | - | Minimum capacity in MW |
-| `maxCapacity` | number | - | Maximum capacity in MW |
-| `studyCycle` | string | - | Filter by MISO study cycle |
-| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `min_capacity` | number | - | Minimum capacity in MW |
+| `max_capacity` | number | - | Maximum capacity in MW |
+| `county` | string | - | Filter by county name (partial match) |
+| `developer` | string | - | Filter by developer name (partial match) |
+| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
+| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
+| `study_cycle` | string | - | Filter by MISO study cycle (e.g., "DPP 2023") |
+| `study_group` | string | - | Filter by study group |
+| `capacity_season` | string | - | Filter by capacity type (winter/summer) |
+| `service_type` | string | - | Filter by service type |
 
 ### Technology Distribution
 
@@ -93,7 +99,7 @@ data = response.json()
   <Accordion title="Get Large Solar Projects (>100 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/miso?technology=Solar&minCapacity=100&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/miso?technology=Solar&min_capacity=100&limit=50"
     ```
   </Accordion>
 </AccordionGroup>
@@ -103,23 +109,44 @@ data = response.json()
 <ResponseExample>
 ```json Example Response
 {
+  "iso": "MISO",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 1567,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 32
+  },
+  "filters": {
+    "state": null,
+    "states": null,
+    "technology": null,
+    "technologies": null,
+    "status": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "study_cycle": null,
+    "cod_start": null,
+    "cod_end": null
+  },
   "data": [
     {
       "iso": "MISO",
       "queue_id": "J1000",
-      "project_name": "Project J1000",
+      "project_name": "Prairie Wind Solar Farm",
       "capacity_mw": 50,
-      "technology": "Photovoltaic",
+      "technology": "Solar",
       "fuel": "Solar",
       "status": "Operating",
-      "detailed_status": "Done",
+      "detailed_status": "In Service",
       "operating_date": "2021-10-01T04:00:00.000Z",
       "request_date": "2018-03-12T04:00:00.000Z",
-      "county": "Grant County",
+      "county": "Grant",
       "state": "WI",
       "queue_position": "J1000",
-      "interconnecting_entity": null,
-      "developer": null,
+      "interconnecting_entity": "American Transmission Company",
+      "developer": "Invenergy",
       "study_cycle": "DPP-2018-APR",
       "study_group": "East (ATC)",
       "service_type": "Network Resource Interconnection Service (NRIS)",
@@ -129,27 +156,34 @@ data = response.json()
       "post_gia_status": "In Service",
       "winter_capacity_mw": 50,
       "summer_capacity_mw": 50
+    },
+    {
+      "iso": "MISO",
+      "queue_id": "M1456",
+      "project_name": "Heartland Wind Project",
+      "capacity_mw": 200,
+      "technology": "Wind",
+      "fuel": "Wind",
+      "status": "Planned",
+      "detailed_status": "Active",
+      "operating_date": "2025-12-01T05:00:00.000Z",
+      "request_date": "2023-06-15T05:00:00.000Z",
+      "county": "Story",
+      "state": "IA",
+      "queue_position": "M1456",
+      "interconnecting_entity": "MidAmerican Energy",
+      "developer": "NextEra Energy Resources",
+      "study_cycle": "DPP-2023-OCT",
+      "study_group": "Central (ITC)",
+      "service_type": "Energy Resource Interconnection Service (ERIS)",
+      "balancing_authority_code": "MISO",
+      "technology_normalized": "Wind",
+      "study_phase": "DPP",
+      "post_gia_status": null,
+      "winter_capacity_mw": 200,
+      "summer_capacity_mw": 195
     }
-  ],
-  "iso": "MISO",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 1567,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 32
-  },
-  "filters": {
-    "states": null,
-    "technologies": null,
-    "minCapacity": null,
-    "maxCapacity": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>

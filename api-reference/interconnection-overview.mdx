@@ -115,7 +115,7 @@ GET /api/v0/interconnection/{iso}?limit=50
 GET /api/v0/interconnection/{iso}?technology=Solar&limit=50
 
 # Filter by capacity and location  
-GET /api/v0/interconnection/{iso}?minCapacity=100&state=CA&limit=50
+GET /api/v0/interconnection/{iso}?min_capacity=100&state=CA&limit=50
 
 # Multiple filters
 GET /api/v0/interconnection/{iso}?technologies=Solar,Wind&status=Planned&limit=50
@@ -153,6 +153,21 @@ All interconnection endpoints return data in this standardized format:
 
 ```json
 {
+  "iso": "CAISO",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 3027,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 61
+  },
+  "filters": {
+    "state": null,
+    "technology": null,
+    "min_capacity": null,
+    "max_capacity": null
+  },
   "data": [
     {
       "iso": "CISO",
@@ -163,19 +178,10 @@ All interconnection endpoints return data in this standardized format:
       "status": "Planned",
       "state": "CA",
       "county": "Fresno",
-      "operating_date": "2025-06-01T00:00:00.000Z",
+      "operating_date": "2025-06-01T00:00:00.000Z"
       // ... ISO-specific fields
     }
-  ],
-  "iso": "CAISO",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 3027,
-    "hasMore": true
-  },
-  "filters": { /* applied filters */ },
-  "customer": { /* customer info */ }
+  ]
 }
 ```
 
@@ -188,7 +194,7 @@ All interconnection endpoints return data in this standardized format:
     Complete field definitions and technology mappings
   </Card>
   
-  <Card title="API Support" icon="envelope" href="mailto:support@cleanview.energy">
+  <Card title="API Support" icon="envelope" href="mailto:support@cleanview.co">
     Get help with integration and data questions
   </Card>
 </CardGroup>

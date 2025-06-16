@@ -9,7 +9,7 @@ To access the Cleanview API, you'll need an API key. During the beta phase, API 
 
 <Steps>
   <Step title="Request Access">
-    Contact our team to request an API key by emailing [api@cleanview.energy](mailto:api@cleanview.energy?subject=API%20Key%20Request) with:
+    Contact our team to request an API key by visiting [our demo page](https://cleanview.co/demo) and providing:
     - Your name and company
     - Intended use case for the API
     - Expected request volume
@@ -28,13 +28,17 @@ To access the Cleanview API, you'll need an API key. During the beta phase, API 
 
 Once you have your API key, you can start making requests to the Cleanview API.
 
+<Note>
+**💡 Quick Test**: Use the **"Try It"** feature in our [API Reference](/api-reference/introduction#try-it-out) to test endpoints directly in your browser with your API key.
+</Note>
+
 ### Authentication
 
-Include your API key in the `Authorization` header of all requests:
+Include your API key in the `x-api-key` header of all requests:
 
 ```bash
-curl -H "Authorization: Bearer cv_pub_your_api_key_here" \
-  https://api.cleanview.energy/api/v0/eia-860m
+curl -H "x-api-key: cv_pub_your_api_key_here" \
+  https://api.cleanview.co/api/v0/eia-860m
 ```
 
 ### Basic Request Examples
@@ -42,14 +46,14 @@ curl -H "Authorization: Bearer cv_pub_your_api_key_here" \
 <AccordionGroup>
   <Accordion icon="database" title="Get EIA 860M Data">
     ```bash
-    curl -H "Authorization: Bearer cv_pub_your_api_key_here" \
-      "https://api.cleanview.energy/api/v0/eia-860m?limit=10"
+    curl -H "x-api-key: cv_pub_your_api_key_here" \
+      "https://api.cleanview.co/api/v0/eia-860m?limit=50"
     ```
     
     ```javascript
-    const response = await fetch('https://api.cleanview.energy/api/v0/eia-860m?limit=10', {
+    const response = await fetch('https://api.cleanview.co/api/v0/eia-860m?limit=50', {
       headers: {
-        'Authorization': 'Bearer cv_pub_your_api_key_here'
+        'x-api-key': 'cv_pub_your_api_key_here'
       }
     });
     const data = await response.json();
@@ -58,16 +62,16 @@ curl -H "Authorization: Bearer cv_pub_your_api_key_here" \
   
   <Accordion icon="network-wired" title="Get Interconnection Queue Data">
     ```bash
-    curl -H "Authorization: Bearer cv_pub_your_api_key_here" \
-      "https://api.cleanview.energy/api/v0/interconnection/ercot?limit=5"
+    curl -H "x-api-key: cv_pub_your_api_key_here" \
+      "https://api.cleanview.co/api/v0/interconnection/ercot?limit=50"
     ```
     
     ```python
     import requests
     
-    headers = {'Authorization': 'Bearer cv_pub_your_api_key_here'}
+    headers = {'x-api-key': 'cv_pub_your_api_key_here'}
     response = requests.get(
-        'https://api.cleanview.energy/api/v0/interconnection/ercot?limit=5',
+        'https://api.cleanview.co/api/v0/interconnection/ercot?limit=50',
         headers=headers
     )
     data = response.json()
@@ -82,16 +86,23 @@ All API responses follow a consistent format:
 ```json
 {
   "success": true,
-  "data": [...],
-  "metadata": {
-    "total": 1000,
-    "limit": 10,
-    "offset": 0
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 1000,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 20
   },
-  "pagination": {
-    "next": "https://api.cleanview.energy/api/v0/eia-860m?limit=10&offset=10",
-    "previous": null
-  }
+  "filters": {
+    "state": "CA",
+    "technology": "Solar"
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  },
+  "data": [...]
 }
 ```
 
@@ -112,6 +123,3 @@ All API responses follow a consistent format:
   </Card>
 </CardGroup>
 
-<Note>
-  **Rate Limits:** During beta, there are no enforced rate limits, but please be considerate with your request volume. Rate limiting will be implemented in future versions.
-</Note>

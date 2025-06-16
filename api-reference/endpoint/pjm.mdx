@@ -51,17 +51,21 @@ data = response.json()
 |-----------|------|---------|-------------|
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code (PA, OH, NJ, etc.) |
-| `states` | array | - | Filter by multiple states (comma-separated) |
-| `technology` | string | - | Filter by standardized technology type |
-| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `state` | string | - | Filter by state code (PA, OH, NJ, etc.) - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
-| `minCapacity` | number | - | Minimum capacity in MW |
-| `maxCapacity` | number | - | Maximum capacity in MW |
+| `min_capacity` | number | - | Minimum capacity in MW |
+| `max_capacity` | number | - | Maximum capacity in MW |
 | `county` | string | - | Filter by county name (partial match) |
-| `transmissionOwner` | string | - | Filter by transmission owner |
-| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `developer` | string | - | Filter by developer name (partial match) |
+| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
+| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
+| `transmission_owner` | string | - | Filter by transmission owner |
+| `study_phase` | string | - | Filter by study phase |
+| `project_type` | string | - | Filter by project type |
 
 ### Technology Options
 
@@ -110,7 +114,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Large Natural Gas Projects (>300 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/pjm?technology=Natural Gas&minCapacity=300&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/pjm?technology=Natural Gas&min_capacity=300&limit=50"
     ```
     
     Finds large-scale natural gas projects in the PJM queue.
@@ -119,10 +123,10 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Projects by Multiple States">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/pjm?states=PA,OH,NJ&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/pjm?state=PA,OH,NJ&limit=50"
     ```
     
-    Uses `states` parameter for multi-state filtering in the Mid-Atlantic region.
+    Uses comma-separated values for multi-state filtering in the Mid-Atlantic region.
   </Accordion>
 </AccordionGroup>
 
@@ -131,11 +135,33 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 <ResponseExample>
 ```json Example Response
 {
+  "iso": "PJM",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 1834,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 37
+  },
+  "filters": {
+    "state": null,
+    "states": null,
+    "technology": null,
+    "technologies": null,
+    "status": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "county": null,
+    "transmission_owner": null,
+    "cod_start": null,
+    "cod_end": null
+  },
   "data": [
     {
       "iso": "PJM",
       "queue_id": "AB3-123",
-      "project_name": "Sample Solar Project",
+      "project_name": "Keystone Solar Project",
       "capacity_mw": 200.0,
       "technology": "Solar",
       "fuel": "Solar",
@@ -146,8 +172,8 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "county": "Chester",
       "state": "PA",
       "queue_position": "AB3-123",
-      "interconnecting_entity": null,
-      "developer": null,
+      "interconnecting_entity": "PECO Energy Company",
+      "developer": "Lightsource BP",
       "feasibility_study_status": "Complete",
       "system_impact_study_status": "In Progress",
       "facilities_study_status": "Not Started",
@@ -157,30 +183,40 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "project_type": "Generation",
       "balancing_authority_code": "PJM",
       "technology_normalized": "Solar",
-      "projectNumber": "AB3-123",
-      "commercialName": null,
-      "maximumFacilityOutput": 200
+      "project_number": "AB3-123",
+      "commercial_name": "Keystone Solar",
+      "maximum_facility_output": 200
+    },
+    {
+      "iso": "PJM",
+      "queue_id": "AC1-456",
+      "project_name": "Buckeye Wind Farm",
+      "capacity_mw": 150.0,
+      "technology": "Wind",
+      "fuel": "Wind",
+      "status": "Operating",
+      "detailed_status": "In Service",
+      "operating_date": "2024-06-15T00:00:00.000Z",
+      "request_date": "2021-08-20T00:00:00.000Z",
+      "county": "Huron",
+      "state": "OH",
+      "queue_position": "AC1-456",
+      "interconnecting_entity": "American Electric Power",
+      "developer": "EDF Renewables",
+      "feasibility_study_status": "Complete",
+      "system_impact_study_status": "Complete",
+      "facilities_study_status": "Complete",
+      "interconnection_agreement_status": "Executed",
+      "construction_service_agreement_status": "Executed",
+      "transmission_owner": "AEP",
+      "project_type": "Generation",
+      "balancing_authority_code": "PJM",
+      "technology_normalized": "Wind",
+      "project_number": "AC1-456",
+      "commercial_name": "Buckeye Wind",
+      "maximum_facility_output": 150
     }
-  ],
-  "iso": "PJM",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 1834,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 37
-  },
-  "filters": {
-    "states": null,
-    "technologies": null,
-    "minCapacity": null,
-    "maxCapacity": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>

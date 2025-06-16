@@ -47,16 +47,21 @@ data = response.json()
 |-----------|------|---------|-------------|
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code (primarily TX) |
-| `technology` | string | - | Filter by standardized technology type |
-| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `state` | string | - | Filter by state code (primarily TX) - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
-| `minCapacity` | number | - | Minimum capacity in MW |
-| `maxCapacity` | number | - | Maximum capacity in MW |
+| `min_capacity` | number | - | Minimum capacity in MW |
+| `max_capacity` | number | - | Maximum capacity in MW |
 | `county` | string | - | Filter by county name (partial match) |
-| `studyComplete` | string | - | Filter by completed study type (ERCOT-specific) |
-| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `developer` | string | - | Filter by developer name (partial match) |
+| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
+| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
+| `study_milestone` | string | - | Filter by progressive milestone (screening, fis, ia, commercial) |
+| `gia_status` | string | - | Filter by Generation Interconnection Agreement status |
+| `reporting_zone` | string | - | Filter by CDR reporting zone (NORTH, SOUTH, WEST, HOUSTON, FAR_WEST) |
 
 ### Technology Options
 
@@ -81,13 +86,24 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 | `Operating` | 400+ | Commercial operation achieved |
 | `Cancelled` | 300+ | Withdrawn or terminated |
 
-### ERCOT Study Phases
+### ERCOT Study Milestones
 
-| Study Complete | Description |
-|----------------|-------------|
+| Milestone | Description |
+|-----------|-------------|
 | `screening` | Screening study completed |
 | `fis` | Facility Impact Study completed |
 | `ia` | Interconnection Agreement signed |
+| `commercial` | Commercial operation achieved |
+
+### CDR Reporting Zones
+
+| Zone | Description |
+|------|-------------|
+| `NORTH` | North Texas |
+| `SOUTH` | South Texas |
+| `WEST` | West Texas |
+| `HOUSTON` | Houston area |
+| `FAR_WEST` | Far West Texas |
 
 ## Example Requests
 
@@ -104,7 +120,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Large Wind Projects (>200 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Wind&minCapacity=200&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Wind&min_capacity=200&limit=50"
     ```
     
     Finds large-scale wind projects. Uses `technology=Wind` for wind turbine projects.
@@ -134,13 +150,34 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 <ResponseExample>
 ```json Example Response
 {
+  "iso": "ERCOT",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 2234,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 45
+  },
+  "filters": {
+    "state": null,
+    "technology": null,
+    "technologies": null,
+    "status": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "county": null,
+    "study_complete": null,
+    "cod_start": null,
+    "cod_end": null
+  },
   "data": [
     {
       "iso": "ERCO",
       "queue_id": "12INR0059b",
       "project_name": "HOVEY (Barilla Solar 1B)",
       "capacity_mw": 7.4,
-      "technology": "Photovoltaic Solar",
+      "technology": "Solar",
       "fuel": "SOL",
       "status": "Planned",
       "detailed_status": "Active",
@@ -149,13 +186,13 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "county": "Pecos",
       "state": "TX",
       "queue_position": "12INR0059b",
-      "interconnecting_entity": "First Solar",
-      "developer": null,
-      "gim_study_phase": null,
-      "screening_study_started": null,
-      "screening_study_complete": null,
-      "fis_requested": null,
-      "fis_approved": null,
+      "interconnecting_entity": "Oncor Electric Delivery",
+      "developer": "First Solar",
+      "gim_study_phase": "Phase II",
+      "screening_study_started": "2012-08-15T00:00:00.000Z",
+      "screening_study_complete": "2012-10-30T00:00:00.000Z",
+      "fis_requested": "2012-11-15T00:00:00.000Z",
+      "fis_approved": "2013-06-20T00:00:00.000Z",
       "ia_signed": "2013-12-26T00:00:00.000Z",
       "poi_location": "60385 Solstice 138kV",
       "cdr_reporting_zone": "WEST",
@@ -163,29 +200,37 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "fuel_display": "Solar",
       "balancing_authority_code": "ERCOT",
       "technology_normalized": "Solar"
+    },
+    {
+      "iso": "ERCO",
+      "queue_id": "23GEN0123",
+      "project_name": "West Texas Wind Farm",
+      "capacity_mw": 250.0,
+      "technology": "Wind",
+      "fuel": "WND",
+      "status": "Planned",
+      "detailed_status": "Active",
+      "operating_date": "2026-03-15T00:00:00.000Z",
+      "request_date": "2023-01-10T00:00:00.000Z",
+      "county": "Crockett",
+      "state": "TX",
+      "queue_position": "23GEN0123",
+      "interconnecting_entity": "AEP Texas",
+      "developer": "NextEra Energy",
+      "gim_study_phase": "Phase I",
+      "screening_study_started": "2023-03-01T00:00:00.000Z",
+      "screening_study_complete": null,
+      "fis_requested": null,
+      "fis_approved": null,
+      "ia_signed": null,
+      "poi_location": "Crockett 345kV Substation",
+      "cdr_reporting_zone": "WEST",
+      "technology_display": "Wind",
+      "fuel_display": "Wind",
+      "balancing_authority_code": "ERCOT",
+      "technology_normalized": "Wind"
     }
-  ],
-  "iso": "ERCOT",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 2234,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 45
-  },
-  "filters": {
-    "states": null,
-    "technologies": null,
-    "minCapacity": null,
-    "maxCapacity": null,
-    "codStart": null,
-    "codEnd": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>

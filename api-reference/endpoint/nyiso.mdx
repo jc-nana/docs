@@ -51,15 +51,20 @@ data = response.json()
 |-----------|------|---------|-------------|
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
-| `technology` | string | - | Filter by standardized technology type |
-| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `state` | string | - | Filter by state code (NY) - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
-| `minCapacity` | number | - | Minimum capacity in MW |
-| `maxCapacity` | number | - | Maximum capacity in MW |
+| `min_capacity` | number | - | Minimum capacity in MW |
+| `max_capacity` | number | - | Maximum capacity in MW |
+| `county` | string | - | Filter by county name (partial match) |
+| `developer` | string | - | Filter by developer name (partial match) |
+| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
+| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
 | `zone` | string | - | Filter by NYISO load zone (A-K) |
-| `utility` | string | - | Filter by transmission utility |
-| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `transmissionDistrict` | string | - | Filter by transmission district |
 
 ### Technology Distribution
 
@@ -108,7 +113,7 @@ data = response.json()
   <Accordion title="Get Offshore Wind Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/nyiso?technology=Wind&minCapacity=400&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/nyiso?technology=Wind&min_capacity=400&limit=50"
     ```
   </Accordion>
 </AccordionGroup>
@@ -118,6 +123,26 @@ data = response.json()
 <ResponseExample>
 ```json Example Response
 {
+  "iso": "NYISO",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 423,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 9
+  },
+  "filters": {
+    "technology": null,
+    "technologies": null,
+    "status": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "zone": null,
+    "utility": null,
+    "cod_start": null,
+    "cod_end": null
+  },
   "data": [
     {
       "iso": "NYIS",
@@ -134,33 +159,55 @@ data = response.json()
       "state": "NY",
       "queue_position": "2023-001",
       "developer_interconnection_customer": "Empire Solar Development LLC",
-      "developer": null,
+      "developer": "Empire Solar Development LLC",
       "zone": "F",
       "utility": "National Grid",
       "balancing_authority_code": "NYISO",
       "technology_normalized": "Solar"
+    },
+    {
+      "iso": "NYIS",
+      "queue_id": "2022-045_wind_offshore",
+      "project_name": "South Fork Wind",
+      "capacity_mw": 132.0,
+      "technology": "Wind",
+      "fuel": "Wind",
+      "status": "Operating",
+      "detailed_status": "In Service",
+      "operating_date": "2023-12-15T00:00:00.000Z",
+      "request_date": "2022-03-20T00:00:00.000Z",
+      "county": "Suffolk",
+      "state": "NY",
+      "queue_position": "2022-045",
+      "developer_interconnection_customer": "Ørsted U.S. Offshore Wind",
+      "developer": "Ørsted",
+      "zone": "K",
+      "utility": "PSEG Long Island",
+      "balancing_authority_code": "NYISO",
+      "technology_normalized": "Wind"
+    },
+    {
+      "iso": "NYIS",
+      "queue_id": "2023-078_battery_storage",
+      "project_name": "Ravenswood Battery Storage",
+      "capacity_mw": 20.0,
+      "technology": "Battery",
+      "fuel": "Battery",
+      "status": "Planned",
+      "detailed_status": "Active",
+      "operating_date": "2025-06-30T00:00:00.000Z",
+      "request_date": "2023-08-15T00:00:00.000Z",
+      "county": "Queens",
+      "state": "NY",
+      "queue_position": "2023-078",
+      "developer_interconnection_customer": "LS Power Development",
+      "developer": "LS Power",
+      "zone": "J",
+      "utility": "Con Edison",
+      "balancing_authority_code": "NYISO",
+      "technology_normalized": "Battery"
     }
-  ],
-  "iso": "NYISO",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 423,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 9
-  },
-  "filters": {
-    "states": null,
-    "technologies": null,
-    "zone": null,
-    "minCapacity": null,
-    "maxCapacity": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>

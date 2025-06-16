@@ -51,15 +51,20 @@ data = response.json()
 |-----------|------|---------|-------------|
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code |
-| `states` | array | - | Filter by multiple states (comma-separated) |
-| `technology` | string | - | Filter by standardized technology type |
-| `technologies` | array | - | Filter by multiple technologies (comma-separated) |
+| `state` | string | - | Filter by state code - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
-| `minCapacity` | number | - | Minimum capacity in MW |
-| `maxCapacity` | number | - | Maximum capacity in MW |
-| `codStart` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `codEnd` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `min_capacity` | number | - | Minimum capacity in MW |
+| `max_capacity` | number | - | Maximum capacity in MW |
+| `county` | string | - | Filter by county name (partial match) |
+| `developer` | string | - | Filter by developer name (partial match) |
+| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
+| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
+| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
+| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
+| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
+| `transmission_owner` | string | - | Filter by transmission owner |
+| `study_group` | string | - | Filter by study group |
 
 ### Technology Distribution
 
@@ -102,7 +107,7 @@ data = response.json()
   <Accordion title="Get Large Solar Projects (>100 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/spp?technology=Solar&minCapacity=100&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/spp?technology=Solar&min_capacity=100&limit=50"
     ```
   </Accordion>
 </AccordionGroup>
@@ -112,11 +117,31 @@ data = response.json()
 <ResponseExample>
 ```json Example Response
 {
+  "iso": "SPP",
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 834,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 17
+  },
+  "filters": {
+    "state": null,
+    "states": null,
+    "technology": null,
+    "technologies": null,
+    "status": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "cod_start": null,
+    "cod_end": null
+  },
   "data": [
     {
       "iso": "SWPP",
       "queue_id": "GEN-2023-045",
-      "project_name": "SPP Project",
+      "project_name": "Prairie Winds Kansas",
       "capacity_mw": 300.0,
       "technology": "Wind",
       "fuel": "Wind",
@@ -127,31 +152,50 @@ data = response.json()
       "county": "Barber",
       "state": "KS",
       "queue_position": "GEN-2023-045",
-      "interconnecting_entity": null,
-      "developer": null,
+      "interconnecting_entity": "Evergy Kansas Central",
+      "developer": "NextEra Energy Resources",
+      "balancing_authority_code": "SPP",
+      "technology_normalized": "Wind"
+    },
+    {
+      "iso": "SWPP",
+      "queue_id": "GEN-2023-089",
+      "project_name": "Sooner Solar Project",
+      "capacity_mw": 150.0,
+      "technology": "Solar",
+      "fuel": "Solar",
+      "status": "Planned",
+      "detailed_status": "Active",
+      "operating_date": "2025-12-15T00:00:00.000Z",
+      "request_date": "2023-05-10T00:00:00.000Z",
+      "county": "Caddo",
+      "state": "OK",
+      "queue_position": "GEN-2023-089",
+      "interconnecting_entity": "Public Service Company of Oklahoma",
+      "developer": "Lightsource BP",
+      "balancing_authority_code": "SPP",
+      "technology_normalized": "Solar"
+    },
+    {
+      "iso": "SWPP",
+      "queue_id": "GEN-2022-156",
+      "project_name": "Crossroads Wind Farm",
+      "capacity_mw": 200.0,
+      "technology": "Wind",
+      "fuel": "Wind",
+      "status": "Operating",
+      "detailed_status": "In Service",
+      "operating_date": "2024-08-30T00:00:00.000Z",
+      "request_date": "2022-09-15T00:00:00.000Z",
+      "county": "Dewey",
+      "state": "OK",
+      "queue_position": "GEN-2022-156",
+      "interconnecting_entity": "Oklahoma Gas & Electric",
+      "developer": "Enel Green Power",
       "balancing_authority_code": "SPP",
       "technology_normalized": "Wind"
     }
-  ],
-  "iso": "SPP",
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 834,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 17
-  },
-  "filters": {
-    "states": null,
-    "technologies": null,
-    "minCapacity": null,
-    "maxCapacity": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>

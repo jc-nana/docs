@@ -105,13 +105,23 @@
     "primary": {
       "type": "button",
       "label": "Get API Key",
-      "href": "mailto:api@cleanview.energy?subject=API Key Request"
+      "href": "https://cleanview.co/demo"
     }
   },
   "footer": {
     "socials": {
-      "linkedin": "https://www.linkedin.com/company/cleanview-energy",
-      "x-twitter": "https://x.com/CleanviewEnergy"
+      "linkedin": "https://www.linkedin.com/company/cleanview-energy"
+    }
+  },
+  "openapi": "api-reference/openapi.json",
+  "api": {
+    "playground": {
+      "mode": "interactive"
+    },
+    "maintainOrder": true,
+    "auth": {
+      "method": "key",
+      "name": "x-api-key"
     }
   }
 }

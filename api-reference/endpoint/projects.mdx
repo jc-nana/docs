@@ -9,7 +9,7 @@ description: 'Access unified project data combining EIA 860M and interconnection
 The unified projects endpoint provides a simplified, consolidated view of energy projects by combining data from multiple sources including EIA 860M and major grid operator interconnection queues. This endpoint standardizes project information across different data sources to provide a unified perspective on the energy project landscape.
 
 <Note>
-**Data Sources**: This endpoint combines data from EIA 860M (operating plants) and interconnection queues from major ISOs/RTOs (planned projects).
+**Development Status**: This endpoint currently returns mock data while the unified projects system is in development (Phase 2). The final implementation will combine data from EIA 860M and interconnection queues from major ISOs/RTOs.
 </Note>
 
 ## Endpoint
@@ -50,10 +50,10 @@ data = response.json()
 | `state` | string | - | Filter by state code (e.g., 'CA', 'TX', 'NY') |
 | `technology` | string | - | Filter by standardized technology type |
 | `status` | string | - | Filter by project status |
-| `sourceTable` | string | - | Filter by data source table |
-| `minCapacity` | number | - | Minimum capacity (MW) |
-| `maxCapacity` | number | - | Maximum capacity (MW) |
-| `balancingAuthority` | string | - | Filter by balancing authority code |
+| `source` | string | - | Filter by data source table |
+| `min_capacity` | number | - | Minimum capacity (MW) |
+| `max_capacity` | number | - | Maximum capacity (MW) |
+| `balancing_authority` | string | - | Filter by balancing authority code |
 
 ### Technology Types
 
@@ -114,14 +114,14 @@ Projects are sourced from:
   <Accordion title="Get Large Projects (>100 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/projects?minCapacity=100&limit=50"
+      "https://api.cleanview.co/api/v0/projects?min_capacity=100&limit=50"
     ```
   </Accordion>
   
   <Accordion title="Get Projects from EIA Data Only">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/projects?sourceTable=eia_860m&limit=50"
+      "https://api.cleanview.co/api/v0/projects?source=eia_860m&limit=50"
     ```
   </Accordion>
 </AccordionGroup>
@@ -131,6 +131,27 @@ Projects are sourced from:
 <ResponseExample>
 ```json Example Response
 {
+  "summary": {
+    "limit": 50,
+    "offset": 0,
+    "total_results": 62222,
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 1245
+  },
+  "filters": {
+    "state": null,
+    "technology": null,
+    "status": "all",
+    "source_table": null,
+    "min_capacity": null,
+    "max_capacity": null,
+    "balancing_authority": null
+  },
+  "customer": {
+    "id": "test_user_001",
+    "name": "Test Developer"
+  },
   "data": [
     {
       "source_table": "eia_860m",
@@ -156,28 +177,7 @@ Projects are sourced from:
       "balancing_authority": "CISO",
       "status": "Planned"
     }
-  ],
-  "pagination": {
-    "limit": 50,
-    "offset": 0,
-    "total": 62222,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 1245
-  },
-  "filters": {
-    "state": null,
-    "technology": null,
-    "status": "all",
-    "sourceTable": null,
-    "minCapacity": null,
-    "maxCapacity": null,
-    "balancingAuthority": null
-  },
-  "customer": {
-    "id": "test_user_001",
-    "name": "Test Developer"
-  }
+  ]
 }
 ```
 </ResponseExample>
