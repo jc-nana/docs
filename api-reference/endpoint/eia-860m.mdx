@@ -1,6 +1,6 @@
 ---
 title: 'EIA 860M Data'
-api: 'GET https://api.cleanview.co/api/v0/eia-860m'
+openapi: 'GET /eia-860m'
 description: 'Retrieve EIA 860M power plant data with detailed capacity, operational status, and location information'
 ---
 
@@ -8,47 +8,7 @@ description: 'Retrieve EIA 860M power plant data with detailed capacity, operati
 
 The EIA 860M endpoint provides access to the U.S. Energy Information Administration's monthly electric generator inventory data. This dataset includes comprehensive information about power plants and generators across the United States, including renewable energy projects, traditional generation facilities, and energy storage systems.
 
-## Endpoint
 
-<CodeGroup>
-```bash cURL
-curl -H "x-api-key: your_api_key_here" \
-  "https://api.cleanview.co/api/v0/eia-860m?limit=50&state=CA&energy_source=SUN"
-```
-
-```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/eia-860m?limit=50&state=CA&energy_source=SUN', {
-  headers: {
-    'x-api-key': 'your_api_key_here'
-  }
-});
-const data = await response.json();
-```
-
-```python Python
-import requests
-
-headers = {'x-api-key': 'your_api_key_here'}
-response = requests.get(
-    'https://api.cleanview.co/api/v0/eia-860m?limit=50&state=CA&energy_source=SUN',
-    headers=headers
-)
-data = response.json()
-```
-</CodeGroup>
-
-## Query Parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `limit` | integer | 1000 | Number of records to return (50-5000) |
-| `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code (e.g., 'CA', 'TX', 'NY') |
-| `energy_source` | string | - | Filter by energy source code(s), comma-separated (e.g., 'SUN', 'WND', 'MWH') |
-| `balancing_authority` | string | - | Filter by balancing authority code(s), comma-separated (e.g., 'CISO', 'ERCO', 'PJM') |
-| `status` | string | 'operating' | Filter by operational status |
-| `start_year` | integer | - | Minimum operating year |
-| `end_year` | integer | - | Maximum operating year |
 
 ### Energy Source Codes
 
@@ -153,7 +113,7 @@ Need the complete list of EIA codes? See our [EIA Codes Reference](/api-referenc
     "state": "CA",
     "energy_source": null,
     "balancing_authority": null,
-    "status": "operating",
+    "status": "all",
     "start_year": null,
     "end_year": null
   },

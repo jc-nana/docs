@@ -301,7 +301,8 @@
               "type": "string"
             },
             "description": "Filter by state code (e.g., CA, TX, NY)",
-            "example": "CA"
+            "example": "CA",
+            "pattern": "^[A-Z]{2}$"
           },
           {
             "in": "query",
@@ -309,8 +310,21 @@
             "schema": {
               "type": "string"
             },
-            "description": "Filter by energy source code(s). Multiple codes separated by comma",
-            "example": "SUN,WND"
+            "description": "Filter by energy source code(s). Multiple codes separated by comma. Common codes: SUN (Solar), WND (Wind), MWH (Battery), NG (Natural Gas)",
+            "examples": {
+              "solar": {
+                "value": "SUN",
+                "summary": "Solar only"
+              },
+              "renewables": {
+                "value": "SUN,WND",
+                "summary": "Solar and Wind"
+              },
+              "storage": {
+                "value": "MWH",
+                "summary": "Battery storage"
+              }
+            }
           },
           {
             "in": "query",
@@ -318,7 +332,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Filter by balancing authority acronym(s). Multiple codes separated by comma",
+            "description": "Filter by balancing authority acronym(s). Multiple codes separated by comma. Common codes: CISO (California), ERCO (Texas), PJM (Mid-Atlantic)",
             "example": "CISO,MISO"
           },
           {
@@ -327,9 +341,10 @@
             "schema": {
               "type": "string",
               "enum": ["operating", "retired", "planned", "canceled", "all"],
-              "default": "operating"
+              "default": "all"
             },
-            "description": "Filter by plant status"
+            "description": "Filter by plant status. Default includes all statuses - use this to narrow down results",
+            "example": "operating"
           },
           {
             "in": "query",
@@ -354,11 +369,25 @@
             "name": "limit",
             "schema": {
               "type": "integer",
-              "default": 1000,
+              "default": 500,
               "minimum": 50,
               "maximum": 5000
             },
-            "description": "Number of records to return (optimized range 50-5000)"
+            "description": "Number of records to return. Must be between 50-5000 for optimal performance.",
+            "examples": {
+              "small": {
+                "value": 50,
+                "summary": "Small batch (50 records)"
+              },
+              "default": {
+                "value": 500,
+                "summary": "Default batch (500 records)"
+              },
+              "large": {
+                "value": 5000,
+                "summary": "Maximum batch (5000 records)"
+              }
+            }
           },
           {
             "in": "query",
