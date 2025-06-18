@@ -301,8 +301,7 @@
               "type": "string"
             },
             "description": "Filter by state code (e.g., CA, TX, NY)",
-            "example": "CA",
-            "pattern": "^[A-Z]{2}$"
+            "example": "CA"
           },
           {
             "in": "query",
@@ -613,10 +612,24 @@
             }
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -878,7 +891,41 @@
                       "type": "array",
                       "description": "Array of interconnection queue records",
                       "items": {
-                        "type": "object"
+                        "type": "object",
+                        "properties": {
+                          "iso": {
+                            "type": "string",
+                            "example": "PJM"
+                          },
+                          "queue_id": {
+                            "type": "string",
+                            "example": "AB1-234"
+                          },
+                          "project_name": {
+                            "type": "string",
+                            "example": "Sample Solar Project"
+                          },
+                          "capacity_mw": {
+                            "type": "number",
+                            "example": 156.04
+                          },
+                          "technology": {
+                            "type": "string",
+                            "example": "Solar"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "Planned"
+                          },
+                          "state": {
+                            "type": "string",
+                            "example": "PA"
+                          },
+                          "county": {
+                            "type": "string",
+                            "example": "Allegheny"
+                          }
+                        }
                       }
                     }
                   }

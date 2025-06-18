@@ -189,7 +189,7 @@ Here is EIA’s full list of energy source codes and groupings:
 | All Other Fuels | WH | Waste heat not directly attributed to a fuel source |
 | All Other Fuels | OTH | Other |
 
-### Prime Mover Codes
+## Prime Mover Codes
 
 Here is the full list of EIA prime mover codes:
 
@@ -217,3 +217,25 @@ Here is the full list of EIA prime mover codes:
 | PV | Photovoltaic |
 | WT | Wind Turbine, Onshore |
 | WS | Wind Turbine, Offshore |
+
+## Status Detailed Codes
+
+The `status_detailed` field provides granular information about a generator's lifecycle stage and operational status. These codes help distinguish between various states of development, operation, and retirement.
+
+### Lifecycle Stages and Status Details
+
+| Lifecycle Stage | Status Code | Status Details | Description |
+| --- | --- | --- | --- |
+| **Operating / Active** | OP | Operating | Currently in commercial operation. |
+| | SB | Standby/Backup: available for service but not normally used | Generator is available but not normally used. |
+| | OA | Out of service but expected to return to service in next calendar year | Temporarily offline but expected to return soon. |
+| | OS | Out of service and NOT expected to return to service in next calendar year | Offline with no expected return. |
+| | OT | Other | Does not fit standard categories. |
+| **Construction / Development** | U | Under construction, less than or equal to 50 percent complete | Construction started, ≤ 50% complete. |
+| | V | Under construction, more than 50 percent complete | Construction underway, > 50% complete. |
+| | TS | Construction complete, but not yet in commercial operation | Construction done, not yet operating. |
+| **Planned / Proposed** | P | Planned for installation, but regulatory approvals not initiated | Early planning stage, no approvals yet. |
+| | L | Regulatory approvals pending. Not under construction | Approvals in progress; construction not started. |
+| | T | Regulatory approvals received. Not under construction | Approvals complete, awaiting construction. |
+| **Inactive / Canceled** | CN | Canceled or Postponed | Project was canceled or indefinitely delayed. |
+| | RE | Retired | Generator permanently removed from service. |

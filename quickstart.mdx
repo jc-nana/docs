@@ -50,13 +50,15 @@ curl -H "x-api-key: cv_pub_your_api_key_here" \
       "https://api.cleanview.co/api/v0/eia-860m?limit=50"
     ```
     
-    ```javascript
-    const response = await fetch('https://api.cleanview.co/api/v0/eia-860m?limit=50', {
-      headers: {
-        'x-api-key': 'cv_pub_your_api_key_here'
-      }
-    });
-    const data = await response.json();
+    ```python
+    import requests
+    
+    headers = {'x-api-key': 'cv_pub_your_api_key_here'}
+    response = requests.get(
+        'https://api.cleanview.co/api/v0/eia-860m?limit=50',
+        headers=headers
+    )
+    data = response.json()
     ```
   </Accordion>
   

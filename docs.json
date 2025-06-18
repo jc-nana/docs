@@ -115,13 +115,15 @@
   },
   "openapi": "api-reference/openapi.json",
   "api": {
+    "mdx": {
+      "auth": {
+        "method": "key",
+        "name": "x-api-key"
+      }
+    },
     "playground": {
       "mode": "interactive"
     },
-    "maintainOrder": true,
-    "auth": {
-      "method": "key",
-      "name": "x-api-key"
-    }
+    "maintainOrder": true
   }
 }
