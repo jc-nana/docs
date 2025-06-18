@@ -3,13 +3,19 @@ title: 'EIA Codes Reference'
 description: 'Standardized EIA 860M codes for balancing authorities, energy sources, and prime movers.'
 ---
 
-# EIA codes documentation
+# EIA Codes Documentation
 
 ## EIA 860M Reference Codes
 
-This API uses standardized codes from the U.S. Energy Information Administration (EIA) to represent balancing authorities, energy sources, and prime movers.
+This API uses standardized codes from the U.S. Energy Information Administration (EIA) to represent balancing authorities, energy sources, and prime movers. These codes are derived from official EIA forms and documentation.
 
 Use these codes to filter or interpret results in API responses.
+
+<Note>
+**Official EIA Documentation:**
+- [EIA Form 860 Data](https://www.eia.gov/electricity/data/eia860/) (Annual Electric Power Industry Report)
+- [EIA Form 860M Data](https://www.eia.gov/electricity/data/eia860m/) (Monthly Generator Inventory - source of our API data)
+</Note>
 
 ---
 
@@ -26,6 +32,10 @@ Use these codes to filter or interpret results in API responses.
 ---
 
 ## Balancing Authority Codes
+
+<Note>
+Balancing authority codes in EIA Form 860M data are standardized by NERC (North American Electric Reliability Corporation). These codes may not match current corporate names due to mergers, acquisitions, or other business changes. The codes used in our API data come from the EIA Form 860M monthly generator inventory reporting.
+</Note>
 
 ### Most common balancing authorities
 
@@ -125,6 +135,10 @@ Below are the most common balancing authorities that represent the 7 major RTOs 
 
 ## Energy Source Codes
 
+<Note>
+Energy source codes are defined by the EIA for Form 860M monthly generator inventory reporting. The EIA Form 860M includes a codes spreadsheet that defines energy sources and prime movers for generators with 1 MW or greater combined nameplate capacity. These are the codes used in our API data.
+</Note>
+
 These codes represent the primary fuel or energy type used at a generating facility. The most commonly used codes are:
 
 | Code | Description |
@@ -191,6 +205,10 @@ Here is EIA’s full list of energy source codes and groupings:
 
 ## Prime Mover Codes
 
+<Note>
+Prime mover codes identify the equipment that converts energy into electricity at power plants. These codes are standardized by the EIA for Form 860M monthly generator inventory reporting. Prime movers represent the mechanical equipment that drives the electrical generator (e.g., steam turbine, wind turbine, photovoltaic cells).
+</Note>
+
 Here is the full list of EIA prime mover codes:
 
 | Prime mover codes | Description |
@@ -219,6 +237,10 @@ Here is the full list of EIA prime mover codes:
 | WS | Wind Turbine, Offshore |
 
 ## Status Detailed Codes
+
+<Note>
+Status codes track the operational and development status of generators throughout their lifecycle. These codes are defined in EIA Form 860M monthly generator inventory reporting. The status field helps distinguish between operating, planned, under construction, and retired generators.
+</Note>
 
 The `status_detailed` field provides granular information about a generator's lifecycle stage and operational status. These codes help distinguish between various states of development, operation, and retirement.
 

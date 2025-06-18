@@ -1,7 +1,7 @@
 ---
 title: 'CAISO Interconnection Queue'
 openapi: 'GET /interconnection/caiso'
-description: 'Access real-time CAISO interconnection queue data for renewable energy projects'
+description: 'Access real-time CAISO interconnection queue data for all power projects'
 ---
 
 ## Overview
@@ -11,6 +11,10 @@ The CAISO interconnection queue endpoint provides access to real-time data from 
 <Note>
 **CAISO Coverage**: Contains **3,027 projects** across California (89%), Nevada (5%), Arizona (4%), and Mexico (1%). Top technologies: Solar (1,200+ projects), Battery Storage (1,100+ projects), Wind (300+ projects).
 </Note>
+
+<Warning>
+**Hybrid Projects**: CAISO represents hybrid projects (e.g., solar + storage) as single rows in their Excel source files with multiple technology columns. Our API splits these into separate records for each technology component. See our [comprehensive guide on hybrid project handling](/api-reference/interconnection-codes#how-we-handle-hybrid-projects) for details.
+</Warning>
 
 ## Endpoint
 
@@ -104,13 +108,13 @@ Use standardized technology names for consistent filtering. See our [Interconnec
     Finds large-scale battery storage projects. Uses `technology=Battery` for energy storage systems.
   </Accordion>
   
-  <Accordion title="Get Solar Projects">
+  <Accordion title="Get Wind Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Wind&limit=50"
     ```
     
-    Filters for solar projects in the CAISO queue.
+    Filters for wind projects in the CAISO queue.
   </Accordion>
   
   <Accordion title="Get Projects by Multiple Technologies">

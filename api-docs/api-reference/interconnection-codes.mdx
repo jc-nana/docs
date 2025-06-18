@@ -25,6 +25,20 @@ This API provides standardized access to interconnection queue data from all 7 m
 | **ISNE** | ISO New England | New England | CT, MA, ME, NH, RI, VT |
 | **SWPP** | Southwest Power Pool | Central United States | AR, KS, LA, MO, NE, NM, OK, TX, portions of IA, MN, MT, ND, SD, WY |
 
+<Note>
+These ISO codes align with EIA balancing authority codes used in official federal energy data reporting, including EIA-860M Monthly Generator Reports. For complete EIA balancing authority code references, see the [EIA-860M documentation](https://www.eia.gov/electricity/data/eia860m/).
+
+**Official ISO Documentation:**
+- [CAISO Generator Interconnection](https://www.caiso.com/generation-transmission/generation/generator-interconnection) (Official CAISO interconnection process page)
+- [CAISO Business Practice Manual for GIDAP](https://bpmcm.caiso.com/BPM%20Document%20Library/Generator%20Interconnection%20and%20Deliverability%20Allocation%20Procedures/BPM_for_GIDAP_V29_redline.pdf) (Detailed procedures manual)
+- [ERCOT Planning Guide](https://www.ercot.com/mktrules/guides/planning/current) (Section 5: Generation Resource Interconnection)
+- [ERCOT Resource Integration](https://www.ercot.com/services/rq/integration) (Interconnection process guidance)
+- [PJM Manual 14C](https://www.pjm.com/directory/manuals/m14c/index.html) (Generation and Transmission Interconnection Process)
+- [PJM Interconnection Library](https://www.pjm.com/library/manuals.aspx) (Complete manual library)
+- [MISO Business Practices Manual](https://www.misoenergy.org/legal/business-practices-manuals/) (Generator Interconnection procedures)
+- For geographic coverage, see [FERC Electric Industry Forms](https://www.ferc.gov/industries-data/electric/general-information/electric-industry-forms/form-no-714-annual/about-form-714)
+</Note>
+
 ---
 
 ## Technology Classifications
@@ -57,24 +71,151 @@ The table below outlines our core technology classifications and shows how commo
 
 ### How We Handle Hybrid Projects
 
-Hybrid projects present unique data challenges because each ISO handles them differently:
+Hybrid projects present unique data challenges because each ISO handles them differently in their source data. Our API provides standardized hybrid technology classifications while preserving these original data structures:
 
-- **CAISO**: Breaks hybrid projects into separate rows for each technology component, but retains some ability to map them together through project identifiers
-- **ERCOT**: Lists hybrid projects in their own rows, but doesn't provide the ability to map individual technology components together
-- **SPP and MISO**: Show hybrid projects in their own rows, but we can't disaggregate the capacity of each individual technology component
-- **PJM, NYISO, and ISO-NE**: Use semicolon-separated or coded combinations to represent multiple technologies within a single project
+- **CAISO**: Represents hybrid projects as single rows in their Excel files with multiple technology columns (Type-1, Type-2, Type-3). Our API splits these into separate records for each technology component, allowing you to query individual components while maintaining relationships through the site_id field.
 
-This variation reflects the different approaches ISOs take to managing complex project configurations. Our API preserves these distinctions while providing standardized hybrid categories where possible.
+- **ERCOT**: Unlike CAISO, ERCOT's Excel files already contain separate rows for each technology component, each with its own INR number. Co-located hybrid projects appear as multiple records with similar naming patterns (e.g., "Lupinus Solar 1-3" and "Lupinus Storage 1-3").
+
+- **PJM**: Uses single rows with semicolon-separated technology combinations in the fuel column (e.g., "Solar; Storage", "Wind; Storage").
+
+- **SPP**: Single rows with slash-separated combinations in the fuel_type field and a generation_type value of "Hybrid" (e.g., fuel_type="Solar/Storage").
+
+- **MISO**: Single rows where fuel_type="Hybrid" and the facility_type field specifies the combination (e.g., "Solar/Battery", "Wind/Battery").
+
+- **NYISO**: Uses single-letter hybrid codes like "CR" (Combined Renewable = Solar + Storage) and "CW" (Combined Wind = Wind + Storage).
+
+- **ISO-NE**: Represents hybrids with space-separated fuel codes in single rows (e.g., "SUN BAT" for Solar + Battery).
+
+<Note>
+**Key Insight**: The fundamental difference is that CAISO uses multiple columns within one row for hybrid projects, while ERCOT uses multiple rows. All other ISOs use single rows with various encoding schemes to represent the hybrid nature.
+</Note>
+
+#### Detailed Raw Data Formats by ISO
+
+<Tabs>
+  <Tab title="CAISO">
+    **Raw Excel Structure**: Single row per project with multiple technology columns
+    - Type-1, Type-2, Type-3 columns for different technologies
+    - MW-1, MW-2, MW-3 columns for corresponding capacities
+    - Fuel-1, Fuel-2, Fuel-3 columns for fuel types
+    
+    **API Response**: Each technology component appears as a separate record in our API response. This allows you to:
+    - Query individual technology components
+    - Track capacity by technology type
+    - Group related components using the `site_id` field
+    
+    **Example**: A 100 MW solar + 50 MW battery project in CAISO's Excel (Type-1="Photovoltaic", MW-1=100, Type-2="Storage", MW-2=50) becomes two API records with the same `site_id`.
+  </Tab>
+  
+  <Tab title="ERCOT">
+    **Raw Excel Structure**: Separate rows for each technology component
+    - Each component has its own INR (Interconnection Request) number
+    - Single "Fuel" and "Technology" column per row
+    - Related projects often share similar naming patterns
+    
+    **API Response**: Each technology component appears as a separate record, matching ERCOT's structure. To identify related hybrid components, look for:
+    - Similar project naming patterns (e.g., "Lupinus Solar 1" and "Lupinus Storage 1")
+    - Same POI location
+    - References in the comments field
+    
+    **Example**: A solar + storage project appears as two separate rows in ERCOT's Excel:
+    - Row 1: INR=23INR0035, Project Name="Starling Solar", Fuel="SOL", Capacity=123 MW
+    - Row 2: INR=23INR0181, Project Name="Starling Storage", Fuel="OTH", Capacity=63.6 MW
+  </Tab>
+  
+  <Tab title="PJM">
+    **Raw Excel Structure**: Single row with combined technology field
+    - Fuel column contains semicolon-separated values (e.g., "Solar; Storage")
+    - Single capacity value represents total project capacity
+    
+    **API Response**: Single record per hybrid project with:
+    - Original combined technology string preserved in the `fuel` field
+    - `technology_normalized` field set to appropriate hybrid category (e.g., "Hybrid - Solar + Storage")
+    - Total project capacity (individual component capacities not available)
+    
+    **Example**: A hybrid project appears as one API record with fuel="Solar; Storage", technology_normalized="Hybrid - Solar + Storage", capacity_mw=150
+  </Tab>
+  
+  <Tab title="MISO">
+    **Raw CSV Structure**: Single row with dual classification
+    - "Fuel" column indicates hybrid status (value: "Hybrid")
+    - "Generating Facility" column specifies the combination (e.g., "Solar/Battery")
+    - Separate "Summer MW" and "Winter MW" columns
+    
+    **API Response**: Single record per hybrid project with:
+    - `fuel` field showing "Hybrid"
+    - `technology` field showing the facility type (e.g., "Solar/Battery")
+    - `technology_normalized` mapped to standard hybrid categories
+    - Both `summer_capacity_mw` and `winter_capacity_mw` values
+    
+    **Example**: API record shows fuel="Hybrid", technology="Solar/Battery", technology_normalized="Hybrid - Solar + Storage", summer_capacity_mw=100, winter_capacity_mw=100
+  </Tab>
+  
+  <Tab title="SPP">
+    **Raw CSV Structure**: Single row with dual fields
+    - "Generation Type" column (e.g., "Hybrid")
+    - "Fuel Type" column with slash notation (e.g., "Solar/Storage")
+    
+    **API Response**: Single record showing both `generation_type` and `fuel_type` fields, with `technology_normalized` based on the combination.
+    
+    **Example**: generation_type="Hybrid", fuel_type="Solar/Storage", technology_normalized="Hybrid - Solar + Storage"
+  </Tab>
+  
+  <Tab title="NYISO">
+    **Raw Excel Structure**: Single row with coded values
+    - "Type/Fuel" column uses single-letter codes
+    - CR = Combined Renewable (Solar + Storage)
+    - CW = Combined Wind (Wind + Storage)
+    
+    **API Response**: Single record with the code translated to readable technology types in the `technology_normalized` field while preserving the original code in the `type_fuel` field.
+    
+    **Example**: type_fuel="CR", technology_normalized="Hybrid - Solar + Storage"
+  </Tab>
+  
+  <Tab title="ISO-NE">
+    **Raw Excel Structure**: Single row with space-separated codes
+    - Fuel Type column contains codes like "SUN BAT" (Solar + Battery)
+    - "WND BAT" for Wind + Battery combinations
+    
+    **API Response**: Single record with compound codes parsed into appropriate hybrid technology classifications.
+    
+    **Example**: fuel_type="SUN BAT", technology_normalized="Hybrid - Solar + Storage"
+  </Tab>
+</Tabs>
+
+<Note>
+**Key Insight**: The fundamental difference is that CAISO's raw Excel uses multiple columns within one row, while ERCOT uses multiple rows. All other ISOs use single rows with various encoding schemes to represent the hybrid nature.
+</Note>
+
+#### Important Implications for Data Analysis
+
+<Warning>
+When analyzing hybrid projects across ISOs, be aware that:
+
+1. **Capacity Attribution**: 
+   - CAISO & ERCOT: Individual component capacities are available
+   - PJM, MISO, SPP: Only total project capacity is provided
+   - This affects capacity summation and technology-specific analysis
+
+2. **Project Counting**:
+   - CAISO: One Excel row can become multiple API records
+   - ERCOT: Already multiple rows in source data
+   - Others: One-to-one mapping maintained
+
+3. **Relationship Tracking**:
+   - CAISO: Use `site_id` to group related components
+   - ERCOT: No formal linking - use project name patterns
+   - Others: Single record represents the entire hybrid project
+</Warning>
 
 ---
 
 ## Status Classifications
 
-Interconnection queue data comes from a range of sources—like CAISO, ERCOT, and PJM—each with its own terminology and classification system for tracking project status. While these terms may serve the needs of each individual ISO or RTO, they introduce complexity when aggregating or comparing projects across markets.
+Each ISO uses different terminology for project status, creating complexity when comparing across markets. We standardize these into five consistent categories—*Planned, Operating, Cancelled, Retired,* and *Inactive*—while preserving original status fields for detailed ISO-specific analysis.
 
-To provide a more unified and useful experience for users, we standardize status fields across all data sources. Our standardized status types—*Planned, Operating, Cancelled, Retired,* and *Inactive*—capture the most important lifecycle phases of a clean energy project in a way that is consistent and comparable. This allows you to filter, analyze, and benchmark projects reliably, whether you're looking at a single ISO or comparing across regions.
-
-For each ISO we also provide the original status column to enable users to do their own standardizations or in-depth data ISO-specific analysis.
+This standardization allows you to filter, analyze, and benchmark projects reliably across regions while maintaining access to ISO-specific terminology when needed.
 
 Below, you'll find how we map common status terms from each ISO into our standardized framework. This mapping is designed to preserve as much fidelity as possible while reducing ambiguity for downstream analysis.
 
@@ -90,6 +231,8 @@ Below, you'll find how we map common status terms from each ISO into our standar
 
 ### Status Mapping by ISO
 
+*All status mappings are implemented in our API's status mapping service.*
+
 **CAISO Status Mapping**
 - "Active" → **Planned**
 - "Completed" → **Operating**
@@ -97,13 +240,47 @@ Below, you'll find how we map common status terms from each ISO into our standar
 
 **ERCOT Status Mapping**
 - "Active" → **Planned**
-- "COM" → **Operating** 
-- "WITHD" → **Cancelled**
+- "Commercial Operation" → **Operating**
+- "Cancelled" → **Cancelled**
+- "Inactive" → **Inactive**
+- "Approved for energization" → **Planned**
+- "Approved for synchronization" → **Planned**
 
 **PJM Status Mapping**
 - "Active" → **Planned**
 - "In Service" → **Operating**
 - "Withdrawn" → **Cancelled**
+- "Engineering and Procurement" → **Planned**
+- "Confirmed" → **Planned**
+- "Under Construction" → **Planned**
+- "Suspended" → **Inactive**
+- "Deactivated" → **Inactive**
+- "Retracted" → **Cancelled**
+- "Annulled" → **Cancelled**
+
+**MISO Status Mapping**
+- "Active" → **Planned**
+- "Done" → **Operating**
+- "Withdrawn" → **Cancelled**
+
+**NYISO Status Mapping**
+- "Active" → **Planned**
+- "In Service" → **Operating**
+- "Withdrawn" → **Cancelled**
+
+**ISO-NE Status Mapping**
+- "Under Study" → **Planned** (active projects) or **Inactive** (withdrawn projects)
+- "Under Construction" → **Planned**
+- "In Service" → **Operating**
+- "Partially In Service" → **Planned**
+- "Suspended" → **Inactive**
+
+**SPP Status Mapping**
+- "Active" → **Planned**
+- "In service" → **Operating**
+- "Inactive" → **Inactive**
+- "WITHDRAWN" → **Cancelled**
+- "TERMINATED" → **Cancelled**
 
 ---
 
@@ -151,7 +328,7 @@ In addition to the core standardized fields listed above, each ISO has its own I
 #### By Technology
 ```
 technology=Solar
-technologies=Solar,Wind,Battery
+technology=Solar,Wind,Battery
 ```
 
 #### By Status  
@@ -238,7 +415,7 @@ curl -H "x-api-key: your_api_key" \
 ### Find Projects by Multiple Technologies
 ```bash
 curl -H "x-api-key: your_api_key" \
-  "https://api.cleanview.co/api/v0/interconnection/pjm?technologies=Solar,Wind&limit=50"
+  "https://api.cleanview.co/api/v0/interconnection/pjm?technology=Solar,Wind&limit=50"
 ```
 
 <Tip>

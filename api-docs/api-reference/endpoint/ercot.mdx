@@ -1,7 +1,7 @@
 ---
 title: 'ERCOT Interconnection Queue'
 openapi: 'GET /interconnection/ercot'
-description: 'Access real-time ERCOT interconnection queue data for renewable energy projects'
+description: 'Access real-time ERCOT interconnection queue data for all power projects'
 ---
 
 ## Overview
@@ -9,7 +9,11 @@ description: 'Access real-time ERCOT interconnection queue data for renewable en
 The ERCOT interconnection queue endpoint provides access to real-time data from the Electric Reliability Council of Texas (ERCOT) interconnection queue, which serves most of Texas.
 
 <Note>
-**ERCOT Coverage**: Contains **2,200+ projects** primarily in Texas (99%). Top technologies: Solar (800+ projects), Wind (400+ projects), Battery Storage (350+ projects), Hybrid Solar+Storage (200+ projects).
+**ERCOT Coverage**: Contains **2,200+ projects** primarily in Texas (99%). Top technologies: Solar (800+ projects), Wind (400+ projects), Battery Storage (350+ projects).
+</Note>
+
+<Note>
+**Hybrid Projects**: ERCOT represents each technology component of hybrid projects (e.g., solar + storage) as separate rows in their Excel source files with different INR numbers. Our API maintains this structure. See our [comprehensive guide on hybrid project handling](/api-reference/interconnection-codes#how-we-handle-hybrid-projects) for details.
 </Note>
 
 ## Endpoint
@@ -124,13 +128,13 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
     Finds large-scale wind projects. Uses `technology=Wind` for wind turbine projects.
   </Accordion>
   
-  <Accordion title="Get Hybrid Solar+Storage Projects">
+  <Accordion title="Get Battery Storage Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Hybrid - Solar + Storage&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Battery&limit=50"
     ```
     
-    Filters for hybrid solar and storage projects (ERCOT has many of these).
+    Filters for battery energy storage projects.
   </Accordion>
   
   <Accordion title="Get Projects in Harris County">
