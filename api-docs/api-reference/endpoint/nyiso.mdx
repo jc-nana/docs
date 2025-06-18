@@ -62,7 +62,6 @@ data = response.json()
 | `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
 | `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
 | `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
 | `zone` | string | - | Filter by NYISO load zone (A-K) |
 | `transmissionDistrict` | string | - | Filter by transmission district |
 
@@ -162,7 +161,7 @@ data = response.json()
       "developer": "Empire Solar Development LLC",
       "zone": "F",
       "utility": "National Grid",
-      "balancing_authority_code": "NYISO",
+      "balancing_authority_code": "NYIS",
       "technology_normalized": "Solar"
     },
     {
@@ -183,7 +182,7 @@ data = response.json()
       "developer": "Ørsted",
       "zone": "K",
       "utility": "PSEG Long Island",
-      "balancing_authority_code": "NYISO",
+      "balancing_authority_code": "NYIS",
       "technology_normalized": "Wind"
     },
     {
@@ -204,7 +203,7 @@ data = response.json()
       "developer": "LS Power",
       "zone": "J",
       "utility": "Con Edison",
-      "balancing_authority_code": "NYISO",
+      "balancing_authority_code": "NYIS",
       "technology_normalized": "Battery"
     }
   ]

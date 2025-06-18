@@ -6,7 +6,7 @@ description: 'Access real-time ERCOT interconnection queue data for renewable en
 
 ## Overview
 
-The ERCOT interconnection queue endpoint provides access to real-time data from the Electric Reliability Council of Texas (ERCOT) interconnection queue. This includes all renewable energy projects seeking to connect to the ERCOT grid, which serves most of Texas.
+The ERCOT interconnection queue endpoint provides access to real-time data from the Electric Reliability Council of Texas (ERCOT) interconnection queue, which serves most of Texas.
 
 <Note>
 **ERCOT Coverage**: Contains **2,200+ projects** primarily in Texas (99%). Top technologies: Solar (800+ projects), Wind (400+ projects), Battery Storage (350+ projects), Hybrid Solar+Storage (200+ projects).
@@ -58,7 +58,6 @@ data = response.json()
 | `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
 | `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
 | `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
 | `study_milestone` | string | - | Filter by progressive milestone (screening, fis, ia, commercial) |
 | `gia_status` | string | - | Filter by Generation Interconnection Agreement status |
 | `reporting_zone` | string | - | Filter by CDR reporting zone (NORTH, SOUTH, WEST, HOUSTON, FAR_WEST) |
@@ -74,7 +73,6 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 | `Solar` | 800+ | Solar photovoltaic projects |
 | `Wind` | 400+ | Wind turbine projects |
 | `Battery` | 350+ | Battery energy storage systems |
-| `Hybrid - Solar + Storage` | 200+ | Co-located solar and battery |
 | `Natural Gas` | 150+ | Natural gas generation |
 | `Other` | 300+ | Other technologies |
 
@@ -198,7 +196,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "cdr_reporting_zone": "WEST",
       "technology_display": "Photovoltaic Solar",
       "fuel_display": "Solar",
-      "balancing_authority_code": "ERCOT",
+      "balancing_authority_code": "ERCO",
       "technology_normalized": "Solar"
     },
     {
@@ -227,7 +225,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "cdr_reporting_zone": "WEST",
       "technology_display": "Wind",
       "fuel_display": "Wind",
-      "balancing_authority_code": "ERCOT",
+      "balancing_authority_code": "ERCO",
       "technology_normalized": "Wind"
     }
   ]
@@ -248,7 +246,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 | `technology` | string | Standardized technology type |
 | `status` | string | Standardized status (Planned, Operating, Cancelled) |
 | `queue_position` | string | Queue position identifier |
-| `balancing_authority_code` | string | Always "ERCOT" |
+| `balancing_authority_code` | string | Always "ERCO" |
 
 ### Location & Timing
 
@@ -293,44 +291,6 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 |-------|------|-------------|
 | `developer` | string | Developer name (limited availability) |
 
-## Data Statistics
-
-### Geographic Distribution
-
-| CDR Zone | Project Count | Description |
-|----------|---------------|-------------|
-| WEST | ~600 | West Texas (wind-heavy) |
-| SOUTH | ~500 | South Texas |
-| NORTH | ~450 | North Texas |
-| HOUSTON | ~400 | Houston area |
-| FAR_WEST | ~280 | Far West Texas |
-
-### Technology Distribution
-
-| Technology | Average MW | Typical Range | Notes |
-|------------|------------|---------------|-------|
-| Solar | 125 | 10-500 MW | Largest category |
-| Wind | 285 | 100-800 MW | Larger average size |
-| Battery | 95 | 20-400 MW | Growing rapidly |
-| Hybrid | 180 | 50-600 MW | Unique to Texas |
-
-### Top Counties by Project Count
-
-| County | Project Count | Primary Technology |
-|--------|---------------|-------------------|
-| Webb | ~120 | Solar, Wind |
-| Pecos | ~90 | Solar |
-| Crockett | ~85 | Solar |
-| Harris | ~75 | Solar, Storage |
-| Reeves | ~70 | Solar |
-
-### Study Status Distribution
-
-| Study Phase | Complete | In Progress | Percentage |
-|-------------|----------|-------------|------------|
-| Screening | 1,800+ | 200+ | 85% complete |
-| FIS | 1,200+ | 400+ | 70% complete |
-| IA Signed | 800+ | 300+ | 50% complete |
 
 <Note>
 **Data Updates**: ERCOT queue data is updated weekly. The API reflects the most recent Generation Interconnection Request (GIR) data available from ERCOT.

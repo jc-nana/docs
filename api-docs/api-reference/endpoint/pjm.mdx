@@ -62,9 +62,7 @@ data = response.json()
 | `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
 | `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
 | `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
 | `transmission_owner` | string | - | Filter by transmission owner |
-| `study_phase` | string | - | Filter by study phase |
 | `project_type` | string | - | Filter by project type |
 
 ### Technology Options
@@ -274,36 +272,6 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 |-------|------|-------------|
 | `developer` | string | Developer name (limited availability) |
 
-## Data Statistics
-
-### Geographic Distribution
-
-| State | Project Count | Top Technology | Capacity (GW) |
-|-------|---------------|----------------|---------------|
-| Pennsylvania | ~400 | Solar, Natural Gas | ~15 |
-| Ohio | ~300 | Solar, Wind | ~12 |
-| New Jersey | ~250 | Solar | ~8 |
-| Illinois | ~200 | Solar, Wind | ~10 |
-| Virginia | ~180 | Solar | ~7 |
-
-### Technology Distribution
-
-| Technology | Average MW | Typical Range | Notes |
-|------------|------------|---------------|-------|
-| Solar | 95 | 5-500 MW | Distributed + utility scale |
-| Natural Gas | 485 | 200-1000 MW | Large combined cycle plants |
-| Wind | 175 | 50-400 MW | Onshore wind farms |
-| Battery | 125 | 25-400 MW | Storage growing rapidly |
-
-### Top Transmission Owners
-
-| Transmission Owner | Project Count | Primary States |
-|-------------------|---------------|----------------|
-| PPL | ~180 | PA |
-| PECO | ~150 | PA |
-| FirstEnergy | ~140 | OH, PA |
-| ComEd | ~120 | IL |
-| Dominion | ~100 | VA |
 
 <Note>
 **Data Updates**: PJM queue data is updated monthly based on PJM's New Services Queue reports. The API reflects the most recent interconnection queue data available.

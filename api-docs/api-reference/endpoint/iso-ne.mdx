@@ -62,7 +62,6 @@ data = response.json()
 | `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
 | `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
 | `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
 | `loadZone` | string | - | Filter by load zone |
 | `dataSource` | string | - | Filter by data source (active, withdrawn, etc.) |
 
@@ -157,7 +156,7 @@ data = response.json()
       "neiso_developer": "Cape Light Compact",
       "developer": "Cape Light Compact",
       "data_source": "active",
-      "balancing_authority_code": "NEISO",
+      "balancing_authority_code": "ISNE",
       "technology_normalized": "Hybrid - Solar + Storage"
     },
     {
@@ -177,7 +176,7 @@ data = response.json()
       "neiso_developer": "Vineyard Wind LLC",
       "developer": "Avangrid Renewables",
       "data_source": "active",
-      "balancing_authority_code": "NEISO",
+      "balancing_authority_code": "ISNE",
       "technology_normalized": "Wind"
     },
     {
@@ -197,7 +196,7 @@ data = response.json()
       "neiso_developer": "Vermont Solar LLC",
       "developer": "SunPower Corporation",
       "data_source": "active",
-      "balancing_authority_code": "NEISO",
+      "balancing_authority_code": "ISNE",
       "technology_normalized": "Solar"
     }
   ]

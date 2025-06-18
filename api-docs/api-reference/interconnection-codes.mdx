@@ -29,9 +29,15 @@ This API provides standardized access to interconnection queue data from all 7 m
 
 ## Technology Classifications
 
-### Standardized Technology Types
+Each ISO uses slightly different terminology to describe project technologies. For example, one ISO might list a project as "Photovoltaic," another as "Solar PV," and a third as simply "Solar." These inconsistencies make it difficult to compare technologies across datasets or group them for analysis without extensive cleaning.
 
-Our API normalizes different ISO terminology into standardized categories:
+To solve this, we normalize technology terms into a standardized set of categories. This ensures consistent labeling across projects, regardless of the original source, and makes it easier for users to filter by technology type, track deployment trends, or compare development pipelines across geographies and markets.
+
+We also provide the original technology column to enable users to do their own standardizations or in-depth data ISO-specific analysis.
+
+The table below outlines our core technology classifications and shows how common ISO-specific terms are mapped into each category.
+
+### Standardized Technology Types
 
 | Standard Technology | Description | Common ISO Variations |
 | --- | --- | --- |
@@ -49,29 +55,28 @@ Our API normalizes different ISO terminology into standardized categories:
 | **Coal** | Coal generation | Coal, Steam Turbine (Coal) |
 | **Other** | Other technologies | Fuel Cell, Hydrogen, Transmission |
 
-### Technology Distribution by ISO
+### How We Handle Hybrid Projects
 
-**CAISO (Top Technologies)**
-- Solar: ~1,200 projects
-- Battery: ~1,100 projects  
-- Wind: ~300 projects
-- Natural Gas: ~180 projects
+Hybrid projects present unique data challenges because each ISO handles them differently:
 
-**ERCOT (Top Technologies)**
-- Solar: ~800 projects
-- Wind: ~400 projects
-- Battery: ~350 projects
-- Hybrid - Solar + Storage: ~200 projects
+- **CAISO**: Breaks hybrid projects into separate rows for each technology component, but retains some ability to map them together through project identifiers
+- **ERCOT**: Lists hybrid projects in their own rows, but doesn't provide the ability to map individual technology components together
+- **SPP and MISO**: Show hybrid projects in their own rows, but we can't disaggregate the capacity of each individual technology component
+- **PJM, NYISO, and ISO-NE**: Use semicolon-separated or coded combinations to represent multiple technologies within a single project
 
-**PJM (Top Technologies)**
-- Solar: ~600 projects
-- Natural Gas: ~300 projects
-- Wind: ~250 projects
-- Battery: ~200 projects
+This variation reflects the different approaches ISOs take to managing complex project configurations. Our API preserves these distinctions while providing standardized hybrid categories where possible.
 
 ---
 
 ## Status Classifications
+
+Interconnection queue data comes from a range of sources—like CAISO, ERCOT, and PJM—each with its own terminology and classification system for tracking project status. While these terms may serve the needs of each individual ISO or RTO, they introduce complexity when aggregating or comparing projects across markets.
+
+To provide a more unified and useful experience for users, we standardize status fields across all data sources. Our standardized status types—*Planned, Operating, Cancelled, Retired,* and *Inactive*—capture the most important lifecycle phases of a clean energy project in a way that is consistent and comparable. This allows you to filter, analyze, and benchmark projects reliably, whether you're looking at a single ISO or comparing across regions.
+
+For each ISO we also provide the original status column to enable users to do their own standardizations or in-depth data ISO-specific analysis.
+
+Below, you'll find how we map common status terms from each ISO into our standardized framework. This mapping is designed to preserve as much fidelity as possible while reducing ambiguity for downstream analysis.
 
 ### Standardized Status Types
 
@@ -83,7 +88,7 @@ Our API normalizes different ISO terminology into standardized categories:
 | **Retired** | Operating projects that have been retired | Retired, Decommissioned |
 | **Inactive** | Projects with suspended or unclear status | Suspended, On Hold, Inactive |
 
-### Status by ISO Examples
+### Status Mapping by ISO
 
 **CAISO Status Mapping**
 - "Active" → **Planned**
@@ -119,104 +124,9 @@ Our API normalizes different ISO terminology into standardized categories:
 | `state` | string | State code (CA, TX, etc.) | Most ISOs |
 | `county` | string | County name | Most ISOs |
 
-### Study Status Fields
+### Additional Fields by ISO
 
-| Field Name | Description | Primary ISOs |
-| --- | --- | --- |
-| `feasibility_study_status` | Feasibility study completion status | CAISO, PJM |
-| `system_impact_study_status` | System impact study status | CAISO, PJM, MISO |
-| `facilities_study_status` | Facilities study completion status | CAISO, PJM |
-| `interconnection_agreement_status` | Interconnection agreement execution status | CAISO, PJM |
-
-### ISO-Specific Fields
-
-**CAISO Unique Fields**
-- `deliverability_status`: Full Capacity, Energy Only, Partial Capacity
-- `voltage_kv`: Interconnection voltage level
-- `station_transmission_line`: Interconnection point details
-
-**ERCOT Unique Fields**
-- `interconnecting_entity`: Transmission utility
-- `poi_location`: Point of interconnection description
-- `cdr_reporting_zone`: ERCOT congestion zone
-- `gim_study_phase`: Generation Interconnection study phase
-
-**PJM Unique Fields**
-- `transmission_owner`: Transmission utility owner
-- `project_type`: Generation vs. Transmission project
-
-**MISO Unique Fields**
-- `study_cycle`: Definitive Planning Phase cycle
-- `study_group`: Study group assignment
-- `summer_capacity_mw` / `winter_capacity_mw`: Seasonal capacity ratings
-
-**NYISO Unique Fields**
-- `zone`: NYISO load zone (A-K)
-- `utility`: Transmission utility
-- `developer_interconnection_customer`: Developer/customer name
-
-**ISO-NE Unique Fields**
-- `neiso_developer`: Developer name
-- `data_source`: Source dataset (active, withdrawn, etc.)
-
----
-
-## Capacity Statistics
-
-### Capacity Ranges by Technology
-
-| Technology | Typical Range (MW) | Average (MW) | Maximum Seen (MW) |
-| --- | --- | --- | --- |
-| **Utility Solar** | 20-500 | 156 | 3,000+ |
-| **Wind Farms** | 50-800 | 228 | 1,000+ |
-| **Battery Storage** | 10-300 | 87 | 400+ |
-| **Natural Gas** | 100-1,000 | 387 | 2,000+ |
-| **Distributed Solar** | 1-20 | 8 | 50 |
-
-### Project Size Distribution
-
-| Size Category | Capacity Range | Percentage of Projects |
-| --- | --- | --- |
-| **Small** | < 20 MW | ~40% |
-| **Medium** | 20-100 MW | ~35% |
-| **Large** | 100-500 MW | ~20% |
-| **Very Large** | > 500 MW | ~5% |
-
----
-
-## Geographic Distribution
-
-### Top States by Project Count
-
-| State | Project Count | Top Technologies |
-| --- | --- | --- |
-| **California** | ~2,800 | Solar, Battery, Wind |
-| **Texas** | ~2,200 | Solar, Wind, Storage |
-| **Pennsylvania** | ~800 | Solar, Natural Gas |
-| **Illinois** | ~600 | Solar, Wind |
-| **New York** | ~400 | Solar, Wind, Storage |
-
-### Regional Characteristics
-
-**West Coast (CAISO)**
-- High solar and storage penetration
-- Strong deliverability requirements
-- Advanced study processes
-
-**Texas (ERCOT)**
-- Wind-heavy portfolio
-- Unique study phases (GIM)
-- Detailed location data
-
-**Northeast (PJM, NYISO, ISO-NE)**
-- Mixed technology portfolio
-- Transmission constraints
-- Detailed developer tracking
-
-**Midwest (MISO, SPP)**
-- Wind-dominated regions
-- Seasonal capacity ratings
-- Study group processes
+In addition to the core standardized fields listed above, each ISO has its own ISO-specific fields that provide additional details relevant to that region's interconnection process. These fields preserve the original data structure and terminology from each ISO's queue, allowing for detailed ISO-specific analysis.
 
 ---
 
@@ -224,17 +134,19 @@ Our API normalizes different ISO terminology into standardized categories:
 
 ### Field Availability
 
-| ISO | Project Names | Coordinates | Developer Info | Study Status |
-| --- | --- | --- | --- | --- |
-| **CAISO** | ✅ Always | ❌ Not available | ❌ Limited | ✅ Detailed |
-| **ERCOT** | ✅ Always | ❌ Not available | ✅ Via entity field | ✅ Detailed |
-| **PJM** | ✅ Usually | ❌ Not available | ❌ Limited | ✅ Detailed |
-| **MISO** | ❌ Limited | ❌ Not available | ❌ Limited | ✅ Basic |
-| **NYISO** | ✅ Usually | ❌ Not available | ✅ Good | ✅ Basic |
-| **ISO-NE** | ✅ Usually | ❌ Not available | ✅ Good | ✅ Basic |
-| **SPP** | ❌ Limited | ❌ Not available | ❌ Limited | ✅ Basic |
+| ISO | Project Names | Coordinates | Study Status |
+| --- | --- | --- | --- |
+| **CAISO** | ✅ Always | ❌ Not available | ✅ Detailed |
+| **ERCOT** | ✅ Always | ❌ Not available | ✅ Detailed |
+| **PJM** | ✅ Usually | ❌ Not available | ✅ Detailed |
+| **MISO** | ❌ Limited | ❌ Not available | ✅ Basic |
+| **NYISO** | ✅ Usually | ❌ Not available | ✅ Basic |
+| **ISO-NE** | ✅ Usually | ❌ Not available | ✅ Basic |
+| **SPP** | ❌ Limited | ❌ Not available | ✅ Basic |
 
-### Common Filtering Patterns
+---
+
+## Common Filtering Patterns
 
 #### By Technology
 ```
@@ -250,8 +162,8 @@ status=Operating
 
 #### By Capacity
 ```
-minCapacity=100
-maxCapacity=500
+min_capacity=100
+max_capacity=500
 ```
 
 #### By Location
@@ -263,9 +175,9 @@ county=Los Angeles
 
 #### By Timeline
 ```
-codStart=2024-01-01
-codEnd=2025-12-31
-queueDateStart=2020-01-01
+cod_start=2024-01-01
+cod_end=2025-12-31
+queue_date_start=2020-01-01
 ```
 
 ---
@@ -293,9 +205,9 @@ All interconnection endpoints return data in this standardized format:
     "limit": 50,
     "offset": 0,
     "total": 3027,
-    "hasMore": true,
-    "currentPage": 1,
-    "totalPages": 61
+    "has_more": true,
+    "current_page": 1,
+    "total_pages": 61
   },
   "filters": {
     // Applied filters
@@ -314,7 +226,7 @@ All interconnection endpoints return data in this standardized format:
 ### Find Large Solar Projects in California
 ```bash
 curl -H "x-api-key: your_api_key" \
-  "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar&minCapacity=100&state=CA&limit=50"
+  "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar&min_capacity=100&state=CA&limit=50"
 ```
 
 ### Get Active Battery Storage Projects

@@ -6,7 +6,7 @@ description: 'Access real-time CAISO interconnection queue data for renewable en
 
 ## Overview
 
-The CAISO interconnection queue endpoint provides access to real-time data from the California Independent System Operator (CAISO) interconnection queue. This includes all renewable energy projects seeking to connect to the CAISO grid, which serves most of California and parts of Nevada.
+The CAISO interconnection queue endpoint provides access to real-time data from the California Independent System Operator (CAISO) interconnection queue, which serves most of California and parts of Nevada.
 
 <Note>
 **CAISO Coverage**: Contains **3,027 projects** across California (89%), Nevada (5%), Arizona (4%), and Mexico (1%). Top technologies: Solar (1,200+ projects), Battery Storage (1,100+ projects), Wind (300+ projects).
@@ -58,8 +58,6 @@ data = response.json()
 | `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
 | `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
 | `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
-| `study_phase` | string | - | Filter by study phase (feasibility, systemImpact, facilities) |
 | `voltage` | number | - | Filter by voltage level (kV) |
 
 ### Technology Options
@@ -74,7 +72,6 @@ Use standardized technology names for consistent filtering. See our [Interconnec
 | `Battery` | 1,100+ | Battery energy storage systems |
 | `Wind` | 300+ | Wind turbine projects |
 | `Natural Gas` | 180+ | Natural gas generation |
-| `Hybrid - Solar + Storage` | 150+ | Co-located solar and battery |
 | `Other` | 200+ | Other technologies |
 
 ### Status Options
@@ -85,13 +82,6 @@ Use standardized technology names for consistent filtering. See our [Interconnec
 | `Operating` | 800+ | Commercial operation achieved |
 | `Cancelled` | 400+ | Withdrawn or terminated |
 
-### Study Phase Options (CAISO-Specific)
-
-| Phase | Description |
-|-------|-------------|
-| `feasibility` | Feasibility study phase |
-| `systemImpact` | System impact study phase |
-| `facilities` | Facilities study phase |
 
 ## Example Requests
 
@@ -114,13 +104,13 @@ Use standardized technology names for consistent filtering. See our [Interconnec
     Finds large-scale battery storage projects. Uses `technology=Battery` for energy storage systems.
   </Accordion>
   
-  <Accordion title="Get Projects in Feasibility Study Phase">
+  <Accordion title="Get Solar Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?study_phase=feasibility&limit=50"
+      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar&limit=50"
     ```
     
-    Filters for projects in the feasibility study phase (CAISO-specific feature).
+    Filters for solar projects in the CAISO queue.
   </Accordion>
   
   <Accordion title="Get Projects by Multiple Technologies">
@@ -184,7 +174,7 @@ Use standardized technology names for consistent filtering. See our [Interconnec
       "voltage_kv": null,
       "station_transmission_line": "Midway-Wheeler Ridge 230 kV Line",
       "study_area": null,
-      "balancing_authority_code": "PGAE"
+      "balancing_authority_code": "CISO"
     }
   ]
 }
@@ -248,33 +238,6 @@ Use standardized technology names for consistent filtering. See our [Interconnec
 | `interconnecting_entity` | string | Usually null for CAISO |
 | `developer` | string | Developer name (limited availability) |
 
-## Data Statistics
-
-### Geographic Distribution
-
-| State | Project Count | Percentage |
-|-------|---------------|------------|
-| California | ~2,700 | 89% |
-| Nevada | ~150 | 5% |
-| Arizona | ~120 | 4% |
-| Mexico | ~30 | 1% |
-
-### Capacity Distribution
-
-| Technology | Average MW | Typical Range |
-|------------|------------|---------------|
-| Solar | 156 | 20-500 MW |
-| Battery | 87 | 20-300 MW |
-| Wind | 228 | 50-800 MW |
-| Natural Gas | 387 | 100-1000 MW |
-
-### Study Status Distribution
-
-| Study Type | Complete | In Progress | Not Started |
-|------------|----------|-------------|-------------|
-| System Impact | 65% | 20% | 15% |
-| Facilities | 45% | 25% | 30% |
-| Interconnection Agreement | 30% | 15% | 55% |
 
 <Note>
 **Data Updates**: CAISO queue data is updated weekly. The API reflects the most recent queue data available from CAISO's public reports.
