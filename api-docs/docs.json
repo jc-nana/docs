@@ -16,14 +16,14 @@
           {
             "group": "Introduction",
             "pages": [
-              "index",
-              "quickstart"
+              "api-docs/index",
+              "api-docs/quickstart"
             ]
           },
           {
             "group": "Authentication",
             "pages": [
-              "authentication"
+              "api-docs/authentication"
             ]
           }
         ]
@@ -34,34 +34,34 @@
           {
             "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "api-docs/api-reference/introduction"
             ]
           },
           {
             "group": "EIA Data",
             "pages": [
-              "api-reference/endpoint/eia-860m",
-              "api-reference/eia-codes"
+              "api-docs/api-reference/endpoint/eia-860m",
+              "api-docs/api-reference/eia-codes"
             ]
           },
           {
             "group": "Interconnection Queues",
             "pages": [
-              "api-reference/interconnection-overview",
-              "api-reference/interconnection-codes",
-              "api-reference/endpoint/ercot",
-              "api-reference/endpoint/caiso",
-              "api-reference/endpoint/pjm",
-              "api-reference/endpoint/miso",
-              "api-reference/endpoint/spp",
-              "api-reference/endpoint/nyiso",
-              "api-reference/endpoint/iso-ne"
+              "api-docs/api-reference/interconnection-overview",
+              "api-docs/api-reference/interconnection-codes",
+              "api-docs/api-reference/endpoint/ercot",
+              "api-docs/api-reference/endpoint/caiso",
+              "api-docs/api-reference/endpoint/pjm",
+              "api-docs/api-reference/endpoint/miso",
+              "api-docs/api-reference/endpoint/spp",
+              "api-docs/api-reference/endpoint/nyiso",
+              "api-docs/api-reference/endpoint/iso-ne"
             ]
           },
           {
             "group": "Projects",
             "pages": [
-              "api-reference/endpoint/projects"
+              "api-docs/api-reference/endpoint/projects"
             ]
           }
         ]
@@ -88,8 +88,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "api-docs/logo/light.svg",
+    "dark": "api-docs/logo/dark.svg"
   },
   "navbar": {
     "links": [
@@ -113,7 +113,7 @@
       "linkedin": "https://www.linkedin.com/company/cleanview-energy"
     }
   },
-  "openapi": "api-reference/openapi.json",
+  "openapi": "api-docs/api-reference/openapi.json",
   "api": {
     "mdx": {
       "auth": {
