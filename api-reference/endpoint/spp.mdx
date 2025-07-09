@@ -1,7 +1,7 @@
 ---
 title: 'SPP Interconnection Queue'
 openapi: 'GET /interconnection/spp'
-description: 'Access real-time Southwest Power Pool interconnection queue data for renewable energy projects'
+description: 'Access real-time Southwest Power Pool interconnection queue data for all power projects'
 ---
 
 ## Overview
@@ -17,11 +17,11 @@ The SPP interconnection queue endpoint provides access to real-time data from So
 <CodeGroup>
 ```bash cURL
 curl -H "x-api-key: your_api_key_here" \
-  "https://api.cleanview.co/api/v0/interconnection/spp?limit=50"
+  "https://api.cleanview.co/api/v1/interconnection/spp?limit=50"
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/interconnection/spp?limit=50', {
+const response = await fetch('https://api.cleanview.co/api/v1/interconnection/spp?limit=50', {
   headers: {
     'x-api-key': 'your_api_key_here'
   }
@@ -34,7 +34,7 @@ import requests
 
 headers = {'x-api-key': 'your_api_key_here'}
 response = requests.get(
-    'https://api.cleanview.co/api/v0/interconnection/spp?limit=50',
+    'https://api.cleanview.co/api/v1/interconnection/spp?limit=50',
     headers=headers
 )
 data = response.json()
@@ -56,15 +56,7 @@ data = response.json()
 | `status` | string | - | Filter by standardized status |
 | `min_capacity` | number | - | Minimum capacity in MW |
 | `max_capacity` | number | - | Maximum capacity in MW |
-| `county` | string | - | Filter by county name (partial match) |
-| `developer` | string | - | Filter by developer name (partial match) |
-| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
-| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
-| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
-| `transmission_owner` | string | - | Filter by transmission owner |
-| `study_group` | string | - | Filter by study group |
+| `developer` | string | - | Filter by developer name (supports partial matches) |
 
 ### Technology Distribution
 
@@ -100,15 +92,42 @@ data = response.json()
   <Accordion title="Get Wind Projects in Kansas">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/spp?technology=Wind&state=KS&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/spp?technology=Wind&state=KS&limit=50"
     ```
   </Accordion>
   
   <Accordion title="Get Large Solar Projects (>100 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/spp?technology=Solar&min_capacity=100&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/spp?technology=Solar&min_capacity=100&limit=50"
     ```
+  </Accordion>
+  
+  <Accordion title="Get NextEra Energy Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/spp?developer=NextEra&limit=50"
+    ```
+    
+    Filters for projects developed by NextEra Energy Resources. Uses partial matching to find all NextEra projects in SPP territory.
+  </Accordion>
+  
+  <Accordion title="Get Projects Without Developer Information">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/spp?developer=null&limit=50"
+    ```
+    
+    Find projects without developer mapping for potential data enhancement opportunities.
+  </Accordion>
+  
+  <Accordion title="Get Multiple Developer Wind Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/spp?developer=NextEra,Invenergy,EDF&technology=Wind&state=KS,OK&limit=50"
+    ```
+    
+    Finds wind projects from multiple major developers in Kansas and Oklahoma.
   </Accordion>
 </AccordionGroup>
 
@@ -128,14 +147,11 @@ data = response.json()
   },
   "filters": {
     "state": null,
-    "states": null,
     "technology": null,
-    "technologies": null,
     "status": null,
     "min_capacity": null,
     "max_capacity": null,
-    "cod_start": null,
-    "cod_end": null
+    "developer": null
   },
   "data": [
     {
@@ -154,7 +170,7 @@ data = response.json()
       "queue_position": "GEN-2023-045",
       "interconnecting_entity": "Evergy Kansas Central",
       "developer": "NextEra Energy Resources",
-      "balancing_authority_code": "SPP",
+      "balancing_authority_code": "SWPP",
       "technology_normalized": "Wind"
     },
     {
@@ -173,7 +189,7 @@ data = response.json()
       "queue_position": "GEN-2023-089",
       "interconnecting_entity": "Public Service Company of Oklahoma",
       "developer": "Lightsource BP",
-      "balancing_authority_code": "SPP",
+      "balancing_authority_code": "SWPP",
       "technology_normalized": "Solar"
     },
     {
@@ -192,7 +208,7 @@ data = response.json()
       "queue_position": "GEN-2022-156",
       "interconnecting_entity": "Oklahoma Gas & Electric",
       "developer": "Enel Green Power",
-      "balancing_authority_code": "SPP",
+      "balancing_authority_code": "SWPP",
       "technology_normalized": "Wind"
     }
   ]

@@ -1,0 +1,96 @@
+---
+title: 'Known Issues & Limitations'
+description: 'Current known issues in the Cleanview API and recommended workarounds'
+---
+
+## Current Known Issues
+
+### Data Availability Limitations
+
+<Warning>
+**Missing Developer Information**
+
+**Issue**: Developer/owner information is not available in the unified projects endpoint.
+
+**Impact**: All project queries return `null` or no developer field.
+
+**Status**: Developer infrastructure exists in the database but is not yet exposed in the API.
+
+**Timeline**: Developer field integration planned for upcoming release.
+</Warning>
+
+<Warning>
+**EIA 860M `operating_month` Field Type**
+
+**Issue**: The `operating_month` field returns as a string instead of a number.
+
+**Workaround**: Use the `operating_date` field for reliable date processing.
+
+**Timeline**: Data pipeline fix planned for upcoming release.
+</Warning>
+
+### Status Mapping Improvements
+
+<Note>
+**Active Status Mapping Development**
+
+**Issue**: Project status mappings are actively being refined to improve accuracy across all ISOs.
+
+**Current Focus**: 
+- Standardizing status categories across CAISO, ERCOT, PJM, MISO, NYISO, NE-ISO, and SPP
+- Refining cancelled vs inactive project classifications
+- Optimizing complex status logic for multi-field ISOs (NE-ISO, SPP)
+
+**During Beta**: Status mapping logic may undergo updates to improve data consistency. All changes will be documented in our update log to maintain transparency.
+
+**Timeline**: Ongoing improvements throughout beta period based on data validation results.
+</Note>
+
+### Technology Filtering Limitations
+
+<Note>
+**Hybrid Project Coverage Gaps**
+
+**Issue**: Hybrid project filtering only works for 5 out of 8 data sources.
+
+**✅ Available (1,343 projects)**: PJM, MISO, SPP, NE-ISO, NYISO  
+**❌ Not Available**: CAISO, ERCOT, EIA 860M
+
+</Note>
+
+## API Behavior Notes
+
+### Error Handling
+- **Queue endpoints** require minimum 50 records per request
+- **Technology filters** are case-insensitive  
+- **Invalid parameters** return clear error messages with HTTP status codes
+
+### Data Monitoring
+- **Cancelled projects** from all sources are being verified post-launch
+- **Multi-source integration** is under ongoing monitoring
+
+
+
+# Future Enhancements
+
+**Planned Improvements**:
+- Unified hybrid identification across all sources
+
+**Timeline**: Future API versions based on user feedback
+
+## Reporting Issues
+
+**What to Include**:
+1. **Endpoint affected** and **issue description**
+2. **Exact API call** that demonstrates the problem
+3. **Expected vs actual response**
+4. (Optional, helps with prioritization) **Your use case** and impact
+
+### Contact
+- **Documentation Feedback**: Please report any issue directly via email during beta.
+
+<Tip>
+**Issue Submission Form**: Automated issue submission system in development for streamlined reporting and tracking.
+</Tip>
+
+Last updated: June 2025

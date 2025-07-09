@@ -61,37 +61,46 @@ Need the complete list of EIA codes? See our [EIA Codes Reference](/api-referenc
   <Accordion title="Get Solar Projects in California">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/eia-860m?state=CA&energy_source=SUN&limit=50"
+      "https://api.cleanview.co/api/v1/eia-860m?state=CA&energy_source=SUN&limit=50"
     ```
-    
+
     Uses `energy_source=SUN` for solar. See [all energy source codes](/api-reference/eia-codes#energy-source-codes).
   </Accordion>
-  
-  <Accordion title="Get Large Wind Projects (>100 MW)">
+
+  <Accordion title="Get Wind Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/eia-860m?energy_source=WND&limit=50"
+      "https://api.cleanview.co/api/v1/eia-860m?energy_source=WND&limit=50"
     ```
-    
+
     Uses `energy_source=WND` for wind. See [all energy source codes](/api-reference/eia-codes#energy-source-codes).
   </Accordion>
-  
+
   <Accordion title="Get Battery Storage Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/eia-860m?energy_source=MWH&status=operating&limit=50"
+      "https://api.cleanview.co/api/v1/eia-860m?energy_source=MWH&status=operating&limit=50"
     ```
-    
+
     Uses `energy_source=MWH` for battery storage. See [all energy source codes](/api-reference/eia-codes#energy-source-codes).
   </Accordion>
-  
+
   <Accordion title="Get Projects by Multiple Balancing Authorities">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/eia-860m?balancing_authority=CISO,ERCO&limit=50"
+      "https://api.cleanview.co/api/v1/eia-860m?balancing_authority=CISO,ERCO&limit=50"
     ```
-    
+
     Uses `balancing_authority=CISO,ERCO` for California ISO and ERCOT. See [all balancing authority codes](/api-reference/eia-codes#balancing-authority-codes).
+  </Accordion>
+
+  <Accordion title="Get Projects by Developer">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/eia-860m?developer=NextEra&limit=50"
+    ```
+
+    Filters projects that have developer mapping data. Supports partial matching. Projects without developer data are excluded from filtered results.
   </Accordion>
 </AccordionGroup>
 
@@ -115,7 +124,8 @@ Need the complete list of EIA codes? See our [EIA Codes Reference](/api-referenc
     "balancing_authority": null,
     "status": "all",
     "start_year": null,
-    "end_year": null
+    "end_year": null,
+    "developer": null
   },
   "customer": {
     "id": "test_user_001",
@@ -147,7 +157,8 @@ Need the complete list of EIA codes? See our [EIA Codes Reference](/api-referenc
       "operating_date": "2025-03-01",
       "retirement_date": null,
       "balancing_authority_code": "CISO",
-      "sector": "IPP Non-CHP"
+      "sector": "IPP Non-CHP",
+      "developer": "Malaga BESS LLC"
     },
     {
       "plant_id": "66167",
@@ -174,7 +185,8 @@ Need the complete list of EIA codes? See our [EIA Codes Reference](/api-referenc
       "operating_date": "2025-03-01",
       "retirement_date": null,
       "balancing_authority_code": "CISO",
-      "sector": "IPP Non-CHP"
+      "sector": "IPP Non-CHP",
+      "developer": "Brookfield Renewable"
     }
   ]
 }
@@ -210,8 +222,8 @@ Need the complete list of EIA codes? See our [EIA Codes Reference](/api-referenc
 | `retirement_date` | string | Retirement date in YYYY-MM-DD format (if applicable) |
 | `balancing_authority_code` | string | Balancing authority acronym |
 | `sector` | string | Sector classification |
+| `developer` | string | Developer company name(s) associated with the project |
 
 <Note>
 **Data Updates**: EIA 860M data is updated monthly by the U.S. Energy Information Administration. Our API reflects the most recent available data.
 </Note>
-

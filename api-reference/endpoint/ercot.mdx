@@ -1,15 +1,19 @@
 ---
 title: 'ERCOT Interconnection Queue'
 openapi: 'GET /interconnection/ercot'
-description: 'Access real-time ERCOT interconnection queue data for renewable energy projects'
+description: 'Access real-time ERCOT interconnection queue data for all power projects'
 ---
 
 ## Overview
 
-The ERCOT interconnection queue endpoint provides access to real-time data from the Electric Reliability Council of Texas (ERCOT) interconnection queue. This includes all renewable energy projects seeking to connect to the ERCOT grid, which serves most of Texas.
+The ERCOT interconnection queue endpoint provides access to real-time data from the Electric Reliability Council of Texas (ERCOT) interconnection queue, which serves most of Texas.
 
 <Note>
-**ERCOT Coverage**: Contains **2,200+ projects** primarily in Texas (99%). Top technologies: Solar (800+ projects), Wind (400+ projects), Battery Storage (350+ projects), Hybrid Solar+Storage (200+ projects).
+**ERCOT Coverage**: Contains **2,200+ projects** primarily in Texas (99%). Top technologies: Solar (800+ projects), Wind (400+ projects), Battery Storage (350+ projects).
+</Note>
+
+<Note>
+**Hybrid Projects**: ERCOT represents each technology component of hybrid projects (e.g., solar + storage) as separate rows in their Excel source files with different INR numbers. Our API maintains this structure. See our [comprehensive guide on hybrid project handling](/api-reference/interconnection-codes#how-we-handle-hybrid-projects) for details.
 </Note>
 
 ## Endpoint
@@ -17,11 +21,11 @@ The ERCOT interconnection queue endpoint provides access to real-time data from 
 <CodeGroup>
 ```bash cURL
 curl -H "x-api-key: your_api_key_here" \
-  "https://api.cleanview.co/api/v0/interconnection/ercot?limit=50"
+  "https://api.cleanview.co/api/v1/interconnection/ercot?limit=50"
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/interconnection/ercot?limit=50', {
+const response = await fetch('https://api.cleanview.co/api/v1/interconnection/ercot?limit=50', {
   headers: {
     'x-api-key': 'your_api_key_here'
   }
@@ -34,7 +38,7 @@ import requests
 
 headers = {'x-api-key': 'your_api_key_here'}
 response = requests.get(
-    'https://api.cleanview.co/api/v0/interconnection/ercot?limit=50',
+    'https://api.cleanview.co/api/v1/interconnection/ercot?limit=50',
     headers=headers
 )
 data = response.json()
@@ -52,16 +56,7 @@ data = response.json()
 | `status` | string | - | Filter by standardized status |
 | `min_capacity` | number | - | Minimum capacity in MW |
 | `max_capacity` | number | - | Maximum capacity in MW |
-| `county` | string | - | Filter by county name (partial match) |
-| `developer` | string | - | Filter by developer name (partial match) |
-| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
-| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
-| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
-| `study_milestone` | string | - | Filter by progressive milestone (screening, fis, ia, commercial) |
-| `gia_status` | string | - | Filter by Generation Interconnection Agreement status |
-| `reporting_zone` | string | - | Filter by CDR reporting zone (NORTH, SOUTH, WEST, HOUSTON, FAR_WEST) |
+| `developer` | string | - | Filter by developer name (supports partial matches) |
 
 ### Technology Options
 
@@ -74,7 +69,6 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 | `Solar` | 800+ | Solar photovoltaic projects |
 | `Wind` | 400+ | Wind turbine projects |
 | `Battery` | 350+ | Battery energy storage systems |
-| `Hybrid - Solar + Storage` | 200+ | Co-located solar and battery |
 | `Natural Gas` | 150+ | Natural gas generation |
 | `Other` | 300+ | Other technologies |
 
@@ -86,24 +80,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 | `Operating` | 400+ | Commercial operation achieved |
 | `Cancelled` | 300+ | Withdrawn or terminated |
 
-### ERCOT Study Milestones
 
-| Milestone | Description |
-|-----------|-------------|
-| `screening` | Screening study completed |
-| `fis` | Facility Impact Study completed |
-| `ia` | Interconnection Agreement signed |
-| `commercial` | Commercial operation achieved |
-
-### CDR Reporting Zones
-
-| Zone | Description |
-|------|-------------|
-| `NORTH` | North Texas |
-| `SOUTH` | South Texas |
-| `WEST` | West Texas |
-| `HOUSTON` | Houston area |
-| `FAR_WEST` | Far West Texas |
 
 ## Example Requests
 
@@ -111,7 +88,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Active Solar Projects in Texas">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Solar&status=Planned&state=TX&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/ercot?technology=Solar&status=Planned&state=TX&limit=50"
     ```
     
     Returns active solar projects in the ERCOT queue. Uses `technology=Solar` for standardized filtering.
@@ -120,28 +97,28 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Large Wind Projects (>200 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Wind&min_capacity=200&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/ercot?technology=Wind&min_capacity=200&limit=50"
     ```
     
     Finds large-scale wind projects. Uses `technology=Wind` for wind turbine projects.
   </Accordion>
   
-  <Accordion title="Get Hybrid Solar+Storage Projects">
+  <Accordion title="Get Battery Storage Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Hybrid - Solar + Storage&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/ercot?technology=Battery&limit=50"
     ```
     
-    Filters for hybrid solar and storage projects (ERCOT has many of these).
+    Filters for battery energy storage projects.
   </Accordion>
   
-  <Accordion title="Get Projects in Harris County">
+  <Accordion title="Get Projects by Multiple Technologies">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/ercot?county=Harris&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/ercot?technology=Solar,Wind,Battery&limit=50"
     ```
     
-    Uses `county` parameter to filter by specific Texas counties.
+    Uses comma-separated values for multiple technology filtering.
   </Accordion>
 </AccordionGroup>
 
@@ -162,14 +139,9 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   "filters": {
     "state": null,
     "technology": null,
-    "technologies": null,
     "status": null,
     "min_capacity": null,
-    "max_capacity": null,
-    "county": null,
-    "study_complete": null,
-    "cod_start": null,
-    "cod_end": null
+    "max_capacity": null
   },
   "data": [
     {
@@ -198,7 +170,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "cdr_reporting_zone": "WEST",
       "technology_display": "Photovoltaic Solar",
       "fuel_display": "Solar",
-      "balancing_authority_code": "ERCOT",
+      "balancing_authority_code": "ERCO",
       "technology_normalized": "Solar"
     },
     {
@@ -227,7 +199,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "cdr_reporting_zone": "WEST",
       "technology_display": "Wind",
       "fuel_display": "Wind",
-      "balancing_authority_code": "ERCOT",
+      "balancing_authority_code": "ERCO",
       "technology_normalized": "Wind"
     }
   ]
@@ -248,7 +220,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 | `technology` | string | Standardized technology type |
 | `status` | string | Standardized status (Planned, Operating, Cancelled) |
 | `queue_position` | string | Queue position identifier |
-| `balancing_authority_code` | string | Always "ERCOT" |
+| `balancing_authority_code` | string | Always "ERCO" |
 
 ### Location & Timing
 
@@ -293,44 +265,6 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 |-------|------|-------------|
 | `developer` | string | Developer name (limited availability) |
 
-## Data Statistics
-
-### Geographic Distribution
-
-| CDR Zone | Project Count | Description |
-|----------|---------------|-------------|
-| WEST | ~600 | West Texas (wind-heavy) |
-| SOUTH | ~500 | South Texas |
-| NORTH | ~450 | North Texas |
-| HOUSTON | ~400 | Houston area |
-| FAR_WEST | ~280 | Far West Texas |
-
-### Technology Distribution
-
-| Technology | Average MW | Typical Range | Notes |
-|------------|------------|---------------|-------|
-| Solar | 125 | 10-500 MW | Largest category |
-| Wind | 285 | 100-800 MW | Larger average size |
-| Battery | 95 | 20-400 MW | Growing rapidly |
-| Hybrid | 180 | 50-600 MW | Unique to Texas |
-
-### Top Counties by Project Count
-
-| County | Project Count | Primary Technology |
-|--------|---------------|-------------------|
-| Webb | ~120 | Solar, Wind |
-| Pecos | ~90 | Solar |
-| Crockett | ~85 | Solar |
-| Harris | ~75 | Solar, Storage |
-| Reeves | ~70 | Solar |
-
-### Study Status Distribution
-
-| Study Phase | Complete | In Progress | Percentage |
-|-------------|----------|-------------|------------|
-| Screening | 1,800+ | 200+ | 85% complete |
-| FIS | 1,200+ | 400+ | 70% complete |
-| IA Signed | 800+ | 300+ | 50% complete |
 
 <Note>
 **Data Updates**: ERCOT queue data is updated weekly. The API reflects the most recent Generation Interconnection Request (GIR) data available from ERCOT.

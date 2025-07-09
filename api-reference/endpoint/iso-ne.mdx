@@ -1,7 +1,7 @@
 ---
 title: 'ISO-NE Interconnection Queue'
 openapi: 'GET /interconnection/iso-ne'
-description: 'Access real-time ISO New England interconnection queue data for renewable energy projects'
+description: 'Access real-time ISO New England interconnection queue data for all power projects'
 ---
 
 ## Overview
@@ -17,11 +17,11 @@ The ISO-NE interconnection queue endpoint provides access to real-time data from
 <CodeGroup>
 ```bash cURL
 curl -H "x-api-key: your_api_key_here" \
-  "https://api.cleanview.co/api/v0/interconnection/iso-ne?limit=50"
+  "https://api.cleanview.co/api/v1/interconnection/iso-ne?limit=50"
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/interconnection/iso-ne?limit=50', {
+const response = await fetch('https://api.cleanview.co/api/v1/interconnection/iso-ne?limit=50', {
   headers: {
     'x-api-key': 'your_api_key_here'
   }
@@ -34,7 +34,7 @@ import requests
 
 headers = {'x-api-key': 'your_api_key_here'}
 response = requests.get(
-    'https://api.cleanview.co/api/v0/interconnection/iso-ne?limit=50',
+    'https://api.cleanview.co/api/v1/interconnection/iso-ne?limit=50',
     headers=headers
 )
 data = response.json()
@@ -56,15 +56,8 @@ data = response.json()
 | `status` | string | - | Filter by standardized status |
 | `min_capacity` | number | - | Minimum capacity in MW |
 | `max_capacity` | number | - | Maximum capacity in MW |
-| `county` | string | - | Filter by county name (partial match) |
-| `developer` | string | - | Filter by developer name (partial match) |
-| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
-| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
-| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
-| `loadZone` | string | - | Filter by load zone |
-| `dataSource` | string | - | Filter by data source (active, withdrawn, etc.) |
+| `developer` | string | - | Filter by developer name (supports partial matches) |
+
 
 ### Technology Distribution
 
@@ -101,15 +94,42 @@ data = response.json()
   <Accordion title="Get Offshore Wind Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/iso-ne?technology=Wind&min_capacity=400&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/iso-ne?technology=Wind&min_capacity=400&limit=50"
     ```
   </Accordion>
   
   <Accordion title="Get Solar Projects in Massachusetts">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/iso-ne?technology=Solar&state=MA&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/iso-ne?technology=Solar&state=MA&limit=50"
     ```
+  </Accordion>
+  
+  <Accordion title="Get Eversource Energy Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/iso-ne?developer=Eversource&limit=50"
+    ```
+    
+    Filters for projects developed by Eversource Energy. Uses partial matching to find all Eversource projects across New England.
+  </Accordion>
+  
+  <Accordion title="Get Projects Without Developer Information">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/iso-ne?developer=null&limit=50"
+    ```
+    
+    Find projects without developer mapping for potential data enhancement opportunities.
+  </Accordion>
+  
+  <Accordion title="Get Multiple Developer Offshore Wind Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/iso-ne?developer=Vineyard Wind,Mayflower Wind,Revolution Wind&technology=Wind&min_capacity=400&limit=50"
+    ```
+    
+    Finds large offshore wind projects from multiple developers in New England waters.
   </Accordion>
 </AccordionGroup>
 
@@ -129,15 +149,11 @@ data = response.json()
   },
   "filters": {
     "state": null,
-    "states": null,
     "technology": null,
-    "technologies": null,
     "status": null,
     "min_capacity": null,
     "max_capacity": null,
-    "data_source": null,
-    "cod_start": null,
-    "cod_end": null
+    "developer": null
   },
   "data": [
     {
@@ -157,7 +173,7 @@ data = response.json()
       "neiso_developer": "Cape Light Compact",
       "developer": "Cape Light Compact",
       "data_source": "active",
-      "balancing_authority_code": "NEISO",
+      "balancing_authority_code": "ISNE",
       "technology_normalized": "Hybrid - Solar + Storage"
     },
     {
@@ -177,7 +193,7 @@ data = response.json()
       "neiso_developer": "Vineyard Wind LLC",
       "developer": "Avangrid Renewables",
       "data_source": "active",
-      "balancing_authority_code": "NEISO",
+      "balancing_authority_code": "ISNE",
       "technology_normalized": "Wind"
     },
     {
@@ -197,7 +213,7 @@ data = response.json()
       "neiso_developer": "Vermont Solar LLC",
       "developer": "SunPower Corporation",
       "data_source": "active",
-      "balancing_authority_code": "NEISO",
+      "balancing_authority_code": "ISNE",
       "technology_normalized": "Solar"
     }
   ]

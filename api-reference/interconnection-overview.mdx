@@ -1,170 +1,82 @@
 ---
-title: 'Interconnection Queues Overview'
-description: 'Complete guide to accessing interconnection queue data from all major U.S. grid operators'
+title: "Interconnection Queue API Overview"
+description: "Access clean energy project data from 7 major grid operators. Streamlined parameters designed for data analysis and pipeline applications."
 ---
 
-# Interconnection Queues API
+# Interconnection Queue API Overview
 
-Access real-time interconnection queue data from all 7 major ISOs/RTOs in the United States. Our API standardizes data from different grid operators into consistent formats while preserving ISO-specific details.
+The Cleanview API provides access to interconnection queue data from 7 major grid operators across the United States. Our API is designed with a focus on reliability and simplicity, offering the most valuable parameters for data analysis and pipeline applications.
 
-## Quick Start
+## **Available Grid Operators**
+
+| ISO/RTO                                      | States Served           | Project Count | Top Technologies         |
+| -------------------------------------------- | ----------------------- | ------------- | ------------------------ |
+| [**CAISO**](/api-reference/endpoint/caiso)   | CA, NV, AZ              | 3,000\+       | Solar, Battery, Wind     |
+| [**ERCOT**](/api-reference/endpoint/ercot)   | TX                      | 2,200\+       | Solar, Wind, Hybrid      |
+| [**PJM**](/api-reference/endpoint/pjm)       | 13 Mid-Atlantic states  | 1,800\+       | Solar, Natural Gas, Wind |
+| [**MISO**](/api-reference/endpoint/miso)     | 15 Midwest/South states | 1,500\+       | Wind, Solar, Natural Gas |
+| [**SPP**](/api-reference/endpoint/spp)       | 8 Central states        | 800\+         | Wind, Solar, Battery     |
+| [**NYISO**](/api-reference/endpoint/nyiso)   | NY                      | 400\+         | Solar, Wind, Battery     |
+| [**ISO-NE**](/api-reference/endpoint/iso-ne) | 6 New England states    | 300\+         | Solar, Wind, Battery     |
+
+## **Supported Parameters**
+
+All interconnection endpoints support a streamlined set of parameters designed for data pipeline and analysis use cases:
+
+### **Core Filtering Parameters**
+- `state` - Filter by state code (e.g., `CA`, `TX`, `NY`) - supports comma-separated values
+- `technology` - Filter by technology type (e.g., `Solar`, `Wind`, `Battery`) - supports comma-separated values  
+- `status` - Filter by project status (`Operating`, `Planned`, `Cancelled`, etc.)
+- `min_capacity` - Minimum capacity in MW (numeric)
+- `max_capacity` - Maximum capacity in MW (numeric)
+
+### **Pagination Parameters**
+- `limit` - Number of records per page (50-5000, default: 1000)
+- `offset` - Number of records to skip (default: 0)
+
+## **Parameter Validation**
+
+Our API uses **strict parameter validation** following industry best practices:
+
+- ✅ **Supported parameters** are processed and applied as filters
+- ❌ **Unknown parameters** are rejected with a `400 Bad Request` error
+- 🛡️ **Invalid values** are rejected with clear error messages
+
+This approach prevents "silent failures" where invalid parameters might be ignored, ensuring your queries work exactly as intended.
+
+## **Basic Usage Examples**
 
 ```bash
-# Get solar projects from CAISO
-curl -H "x-api-key: your_api_key" \
-  "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar&limit=50"
+# Get first 100 solar projects in California
+GET /api/v1/interconnection/caiso?state=CA&technology=Solar&limit=100
 
-# Get wind projects from ERCOT  
-curl -H "x-api-key: your_api_key" \
-  "https://api.cleanview.co/api/v0/interconnection/ercot?technology=Wind&limit=50"
+# Get operating wind projects over 100 MW across multiple states  
+GET /api/v1/interconnection/pjm?state=PA,OH,NJ&technology=Wind&status=Operating&min_capacity=100
+
+# Get planned projects in Texas with pagination
+GET /api/v1/interconnection/ercot?status=Planned&limit=500&offset=1000
 ```
 
----
+## **Response Structure**
 
-## Coverage Map
-
-| ISO/RTO | States Served | Project Count | Top Technologies |
-|---------|---------------|---------------|------------------|
-| **[CAISO](/api-reference/endpoint/caiso)** | CA, NV, AZ | 3,000+ | Solar, Battery, Wind |
-| **[ERCOT](/api-reference/endpoint/ercot)** | TX | 2,200+ | Solar, Wind, Hybrid |
-| **[PJM](/api-reference/endpoint/pjm)** | 13 Mid-Atlantic states | 1,800+ | Solar, Natural Gas, Wind |
-| **[MISO](/api-reference/endpoint/miso)** | 15 Midwest/South states | 1,500+ | Wind, Solar, Natural Gas |
-| **[SPP](/api-reference/endpoint/spp)** | 8 Central states | 800+ | Wind, Solar, Battery |
-| **[NYISO](/api-reference/endpoint/nyiso)** | NY | 400+ | Solar, Wind, Battery |
-| **[ISO-NE](/api-reference/endpoint/iso-ne)** | 6 New England states | 300+ | Solar, Wind, Battery |
-
-<Info>
-**Total Coverage**: 10,000+ projects across all major U.S. electricity markets
-</Info>
-
----
-
-## Key Features
-
-### 🔄 **Standardized Data Model**
-- Consistent field names across all ISOs
-- Unified technology classifications  
-- Standardized status codes
-- Common filtering parameters
-
-### 📊 **Rich Project Details**
-- Capacity ratings and technology types
-- Study phase tracking and milestones
-- Geographic information (state, county, zones)
-- Commercial operation dates
-
-### 🎯 **Flexible Filtering**
-- Filter by technology, capacity, location
-- Date range filtering for COD and queue entry
-- ISO-specific parameters (zones, utilities, etc.)
-- Multi-value filtering support
-
-### ⚡ **Real-Time Updates**
-- Weekly data refreshes from ISO sources
-- Consistent update schedules
-- Historical tracking of project changes
-
----
-
-## Getting Started
-
-### 1. **Choose Your ISO**
-Select the grid operator(s) for your region of interest:
-
-<CardGroup cols={2}>
-  <Card title="West Coast" icon="sun" href="/api-reference/endpoint/caiso">
-    **CAISO** - California, Nevada, Arizona
-    
-    Strong solar and storage focus
-  </Card>
-  
-  <Card title="Texas" icon="wind" href="/api-reference/endpoint/ercot">
-    **ERCOT** - Most of Texas
-    
-    Wind and hybrid project leader
-  </Card>
-  
-  <Card title="Mid-Atlantic" icon="bolt" href="/api-reference/endpoint/pjm">
-    **PJM** - 13 Eastern states
-    
-    Mixed technology portfolio
-  </Card>
-  
-  <Card title="Midwest" icon="wind" href="/api-reference/endpoint/miso">
-    **MISO** - 15 Central states
-    
-    Wind generation hub
-  </Card>
-</CardGroup>
-
-### 2. **Understand the Data**
-Review our comprehensive data guide:
-
-<Card title="Data Reference Guide" icon="book" href="/api-reference/interconnection-codes">
-  Complete guide to technology classifications, status codes, field definitions, and filtering patterns across all ISOs.
-</Card>
-
-### 3. **Start Querying**
-Use consistent parameters across all endpoints:
-
-```bash
-# Basic query
-GET /api/v0/interconnection/{iso}?limit=50
-
-# Filter by technology
-GET /api/v0/interconnection/{iso}?technology=Solar&limit=50
-
-# Filter by capacity and location  
-GET /api/v0/interconnection/{iso}?min_capacity=100&state=CA&limit=50
-
-# Multiple filters
-GET /api/v0/interconnection/{iso}?technologies=Solar,Wind&status=Planned&limit=50
-```
-
----
-
-## Common Use Cases
-
-### 🏗️ **Market Analysis**
-- Track renewable development by region
-- Analyze technology trends over time
-- Identify capacity additions by state/county
-
-### 📈 **Competitive Intelligence**
-- Monitor competitor project pipelines
-- Track study phase progress
-- Identify market opportunities
-
-### 🗺️ **Site Selection**
-- Find interconnection points with capacity
-- Analyze regional queue congestion
-- Identify transmission constraints
-
-### 📊 **Portfolio Management**
-- Track your projects across multiple ISOs
-- Monitor study milestones and timelines
-- Benchmark against market trends
-
----
-
-## Response Format
-
-All interconnection endpoints return data in this standardized format:
+All endpoints return consistent response structures:
 
 ```json
 {
-  "iso": "CAISO",
+  "success": true,
+  "iso": "CISO",
   "summary": {
-    "limit": 50,
+    "limit": 1000,
     "offset": 0,
     "total_results": 3027,
     "has_more": true,
     "current_page": 1,
-    "total_pages": 61
+    "total_pages": 4
   },
   "filters": {
-    "state": null,
-    "technology": null,
+    "state": "CA",
+    "technology": "Solar",
+    "status": null,
     "min_capacity": null,
     "max_capacity": null
   },
@@ -172,33 +84,62 @@ All interconnection endpoints return data in this standardized format:
     {
       "iso": "CISO",
       "queue_id": "1379_photovoltaic",
-      "project_name": "Sample Solar Project",
-      "capacity_mw": 156.04,
-      "technology": "Photovoltaic",
+      "project_name": "Alameda Solar Farm",
+      "capacity_mw": 150.5,
+      "technology": "Solar",
       "status": "Planned",
       "state": "CA",
-      "county": "Fresno",
-      "operating_date": "2025-06-01T00:00:00.000Z"
-      // ... ISO-specific fields
+      "county": "Alameda",
+      // ... additional fields
     }
   ]
 }
 ```
 
----
+## **Common Use Cases**
 
-## Need Help?
+### **Market Analysis**
+- Track renewable development by region and technology
+- Analyze capacity trends and market penetration
+- Identify growth opportunities by state
 
-<CardGroup cols={2}>
-  <Card title="Data Reference" icon="database" href="/api-reference/interconnection-codes">
-    Complete field definitions and technology mappings
-  </Card>
-  
-  <Card title="API Support" icon="envelope" href="mailto:support@cleanview.co">
-    Get help with integration and data questions
-  </Card>
-</CardGroup>
+### **Site Selection**
+- Find development patterns in target regions
+- Compare technology deployment across states
+- Analyze competitive landscape
 
-<Tip>
-**Pro Tip**: Start with the [Data Reference Guide](/api-reference/interconnection-codes) to understand technology classifications and filtering options before diving into specific ISO endpoints.
-</Tip> 
+### **Portfolio Management**
+- Monitor project status changes across multiple ISOs
+- Track development pipelines
+- Benchmark against market trends
+
+### **Data Integration**
+- Export data for analysis in BI tools
+- Build automated reporting pipelines
+- Create custom dashboards and visualizations
+
+## **Error Handling**
+
+The API returns clear, actionable error messages:
+
+```json
+{
+  "error": "INVALID_PARAMETER",
+  "message": "Unknown parameters: developer, county. Supported parameters: limit, offset, state, technology, status, min_capacity, max_capacity"
+}
+```
+
+Common error scenarios:
+- **400 Bad Request** - Invalid or unknown parameters
+- **401 Unauthorized** - Missing or invalid API key
+- **429 Too Many Requests** - Rate limit exceeded
+- **500 Internal Server Error** - Server-side issues
+
+## **Next Steps**
+
+1. **Get Started**: Request your API key from our team
+2. **Explore Endpoints**: Review individual ISO endpoint documentation
+3. **Test Integration**: Use our interactive API documentation
+4. **Build Applications**: Integrate with your data pipeline or application
+
+For detailed parameter documentation and examples, see the individual endpoint pages for each ISO.

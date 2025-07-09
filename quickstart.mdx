@@ -38,7 +38,7 @@ Include your API key in the `x-api-key` header of all requests:
 
 ```bash
 curl -H "x-api-key: cv_pub_your_api_key_here" \
-  https://api.cleanview.co/api/v0/eia-860m
+  https://api.cleanview.co/api/v1/eia-860m
 ```
 
 ### Basic Request Examples
@@ -47,7 +47,7 @@ curl -H "x-api-key: cv_pub_your_api_key_here" \
   <Accordion icon="database" title="Get EIA 860M Data">
     ```bash
     curl -H "x-api-key: cv_pub_your_api_key_here" \
-      "https://api.cleanview.co/api/v0/eia-860m?limit=50"
+      "https://api.cleanview.co/api/v1/eia-860m?limit=50"
     ```
     
     ```python
@@ -55,7 +55,7 @@ curl -H "x-api-key: cv_pub_your_api_key_here" \
     
     headers = {'x-api-key': 'cv_pub_your_api_key_here'}
     response = requests.get(
-        'https://api.cleanview.co/api/v0/eia-860m?limit=50',
+        'https://api.cleanview.co/api/v1/eia-860m?limit=50',
         headers=headers
     )
     data = response.json()
@@ -65,7 +65,7 @@ curl -H "x-api-key: cv_pub_your_api_key_here" \
   <Accordion icon="network-wired" title="Get Interconnection Queue Data">
     ```bash
     curl -H "x-api-key: cv_pub_your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/ercot?limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/ercot?limit=50"
     ```
     
     ```python
@@ -73,7 +73,7 @@ curl -H "x-api-key: cv_pub_your_api_key_here" \
     
     headers = {'x-api-key': 'cv_pub_your_api_key_here'}
     response = requests.get(
-        'https://api.cleanview.co/api/v0/interconnection/ercot?limit=50',
+        'https://api.cleanview.co/api/v1/interconnection/ercot?limit=50',
         headers=headers
     )
     data = response.json()

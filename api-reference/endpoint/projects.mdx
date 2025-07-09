@@ -1,27 +1,25 @@
 ---
-title: 'Unified Projects'
-openapi: 'GET /projects'
-description: 'Access unified project data combining EIA 860M and interconnection queue sources'
+title: "Unified Projects"
+openapi: "GET /projects"
+description: "Access unified project data combining EIA 860M and interconnection queue sources"
 ---
 
 ## Overview
 
 The unified projects endpoint provides a simplified, consolidated view of energy projects by combining data from multiple sources including EIA 860M and major grid operator interconnection queues. This endpoint standardizes project information across different data sources to provide a unified perspective on the energy project landscape.
 
-<Note>
-**Development Status**: This endpoint currently returns mock data while the unified projects system is in development (Phase 2). The final implementation will combine data from EIA 860M and interconnection queues from major ISOs/RTOs.
-</Note>
-
 ## Endpoint
 
 <CodeGroup>
+
 ```bash cURL
 curl -H "x-api-key: your_api_key_here" \
-  "https://api.cleanview.co/api/v0/projects?limit=50&technology=Solar&state=CA"
+  "https://api.cleanview.co/api/v1/projects?limit=50&technology=Solar&state=CA"
 ```
 
+
 ```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/projects?limit=50&technology=Solar&state=CA', {
+const response = await fetch('https://api.cleanview.co/api/v1/projects?limit=50&technology=Solar&state=CA', {
   headers: {
     'x-api-key': 'your_api_key_here'
   }
@@ -29,70 +27,91 @@ const response = await fetch('https://api.cleanview.co/api/v0/projects?limit=50&
 const data = await response.json();
 ```
 
+
 ```python Python
 import requests
 
 headers = {'x-api-key': 'your_api_key_here'}
 response = requests.get(
-    'https://api.cleanview.co/api/v0/projects?limit=50&technology=Solar&state=CA',
+    'https://api.cleanview.co/api/v1/projects?limit=50&technology=Solar&state=CA',
     headers=headers
 )
 data = response.json()
 ```
+
 </CodeGroup>
 
 ## Query Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `limit` | integer | 1000 | Number of records to return (50-5000) |
-| `offset` | integer | 0 | Number of records to skip |
-| `state` | string | - | Filter by state code (e.g., 'CA', 'TX', 'NY') |
-| `technology` | string | - | Filter by standardized technology type |
-| `status` | string | - | Filter by project status |
-| `source` | string | - | Filter by data source table |
-| `min_capacity` | number | - | Minimum capacity (MW) |
-| `max_capacity` | number | - | Maximum capacity (MW) |
-| `balancing_authority` | string | - | Filter by balancing authority code |
+| Parameter             | Type    | Default | Description                                   |
+| --------------------- | ------- | ------- | --------------------------------------------- |
+| `limit`               | integer | 1000    | Number of records to return (50-5000)         |
+| `offset`              | integer | 0       | Number of records to skip                     |
+| `state`               | string  | -       | Filter by state code (e.g., CA, TX, NY) |
+| `technology`          | string  | -       | Filter by standardized technology type        |
+| `status`              | string  | -       | Filter by project status                      |
+| `source_table`        | string  | -       | Filter by data source table                   |
+| `min_capacity`        | number  | -       | Minimum capacity (MW)                         |
+| `max_capacity`        | number  | -       | Maximum capacity (MW)                         |
+| `balancing_authority` | string  | -       | Filter by balancing authority code            |
+| `developer`           | string  | -       | Filter by developer name (e.g., NextEra, Tesla). Supports partial matches |
 
 ### Technology Types
 
 Common standardized technology types:
 
-| Type | Description |
-|------|-------------|
-| `Solar` | Solar photovoltaic |
-| `Wind` | Wind turbine |
-| `Battery` | Battery energy storage |
-| `Natural Gas` | Natural gas generation |
-| `Biomass` | Biomass generation |
-| `Hydroelectric` | Hydroelectric |
-| `Geothermal` | Geothermal |
-| `Hybrid - Solar + Storage` | Combined solar and battery |
+| Type            | Description            |
+| --------------- | ---------------------- |
+| `Solar`         | Solar photovoltaic     |
+| `Wind`          | Wind turbine           |
+| `Battery`       | Battery energy storage |
+| `Natural Gas`   | Natural gas generation |
+| `Biomass`       | Biomass generation     |
+| `Hydroelectric` | Hydroelectric          |
+| `Geothermal`    | Geothermal             |
+
+<Note>
+  **Hybrid Project Availability**: Hybrid technology classifications are available for interconnection queue data (PJM, MISO, SPP, NE-ISO, NYISO) but not for CAISO, ERCOT, or EIA 860M data sources.
+</Note>
 
 ### Project Status
 
-| Status | Description |
-|--------|-------------|
+| Status      | Description           |
+| ----------- | --------------------- |
 | `Operating` | Currently operational |
-| `Planned` | Planned/permitted |
-| `Cancelled` | Cancelled/withdrawn |
-| `Retired` | Retired from service |
+| `Planned`   | Planned/permitted     |
+| `Cancelled` | Cancelled/withdrawn   |
+| `Retired`   | Retired from service  |
 
 ### Data Sources
 
 Projects are sourced from:
 
-| Source | Description |
-|--------|-------------|
-| `eia_860m` | EIA 860M Monthly data (operating plants) |
-| `caiso_queue` | CAISO interconnection queue |
-| `ercot_queue` | ERCOT interconnection queue |
-| `pjm_queue` | PJM interconnection queue |
-| `miso_queue` | MISO interconnection queue |
-| `nyiso_queue` | NYISO interconnection queue |
+| Source         | Description                  |
+| -------------- | ---------------------------- |
+| `eia_860m`     | EIA 860M Monthly data        |
+| `caiso_queue`  | CAISO interconnection queue  |
+| `ercot_queue`  | ERCOT interconnection queue  |
+| `pjm_queue`    | PJM interconnection queue    |
+| `miso_queue`   | MISO interconnection queue   |
+| `nyiso_queue`  | NYISO interconnection queue  |
 | `ne_iso_queue` | ISO-NE interconnection queue |
-| `spp_queue` | SPP interconnection queue |
+| `spp_queue`    | SPP interconnection queue    |
+
+### Developer Information
+
+Developer information is always included in the response when available. The `developer` parameter can be used to filter results:
+
+**Filtering Options:**
+- **Single developer**: `developer=NextEra` - Returns projects where developer name contains "NextEra"
+- **Multiple developers**: `developer=NextEra,Tesla,Sunrun` - Returns projects matching any of the specified developers (union search)
+- **Partial matching**: `developer=Solar` - Returns projects where developer name contains "Solar" (e.g., "First Solar", "Solar Power Corp")
+- **Projects without developers**: `developer=null` - Returns only projects where no developer information is available
+- **Case insensitive**: All developer filtering is case-insensitive
+
+<Note>
+  **Developer Enrichment**: Developer names are normalized and standardized using proprietary algorithms. The `developer` field is always present in responses but may contain `null` values when information is not available.
+</Note>
 
 ## Example Requests
 
@@ -100,35 +119,74 @@ Projects are sourced from:
   <Accordion title="Get Solar Projects in California">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/projects?technology=Solar&state=CA&limit=50"
+      "https://api.cleanview.co/api/v1/projects?technology=Solar&state=CA&limit=50"
     ```
   </Accordion>
-  
   <Accordion title="Get Operating Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/projects?status=Operating&limit=50"
+      "https://api.cleanview.co/api/v1/projects?status=Operating&limit=50"
     ```
   </Accordion>
-  
   <Accordion title="Get Large Projects (>100 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/projects?min_capacity=100&limit=50"
+      "https://api.cleanview.co/api/v1/projects?min_capacity=100&limit=50"
     ```
   </Accordion>
-  
   <Accordion title="Get Projects from EIA Data Only">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/projects?source=eia_860m&limit=50"
+      "https://api.cleanview.co/api/v1/projects?source_table=eia_860m&limit=50"
+    ```
+  </Accordion>
+  <Accordion title="Get Projects by Specific Developer">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/projects?developer=NextEra&limit=50"
+    ```
+  </Accordion>
+  <Accordion title="Get Projects by Multiple Developers">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/projects?developer=NextEra,Tesla,Sunrun&limit=50"
+    ```
+  </Accordion>
+  <Accordion title="Get Projects without Developer Information">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/projects?developer=null&limit=50"
     ```
   </Accordion>
 </AccordionGroup>
 
+
+### Data Availability Summary
+
+| Source                        | Hybrid Projects | Status                          |
+| ----------------------------- | --------------- | ------------------------------- |
+| PJM, MISO, SPP, NE-ISO, NYISO | 1,343 total     | ✅ **Full support**              |
+| CAISO, ERCOT, EIA 860M        | 0               | ❌ **No hybrid classifications** |
+
+<Warning>
+  **System Limitations**: Our current query system is not optimized for detecting hybrid projects in CAISO, ERCOT, or EIA data sources.
+</Warning>
+
+### Complete Documentation
+
+For comprehensive hybrid project guidance including:
+
+- ✅ **All 4 query methods** with code examples
+- ✅ **Detailed workarounds** for sources without hybrid data
+- ✅ **Root cause analysis** and technical limitations
+- ✅ **Future enhancement roadmap**
+
+[**👉 See our complete Hybrid Project System Limitations documentation.**](/known-issues#hybrid-project-system-limitations)
+
 ## Response Schema
 
 <ResponseExample>
+
 ```json Example Response
 {
   "summary": {
@@ -146,7 +204,8 @@ Projects are sourced from:
     "source_table": null,
     "min_capacity": null,
     "max_capacity": null,
-    "balancing_authority": null
+    "balancing_authority": null,
+    "developer": null
   },
   "customer": {
     "id": "test_user_001",
@@ -163,7 +222,8 @@ Projects are sourced from:
       "county": "Orange",
       "state": "NY",
       "balancing_authority": "NYIS",
-      "status": "Planned"
+      "status": "Planned",
+      "developer": "TBE Montgomery"
     },
     {
       "source_table": "caiso_queue",
@@ -175,32 +235,35 @@ Projects are sourced from:
       "county": "San Diego",
       "state": "CA",
       "balancing_authority": "CISO",
-      "status": "Planned"
+      "status": "Planned",
+      "developer": null
     }
   ]
 }
 ```
+
 </ResponseExample>
 
 ## Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `source_table` | string | Source data table (eia_860m, caiso_queue, etc.) |
-| `source_id` | string | Unique identifier within source table |
-| `project_name` | string | Project or facility name |
-| `capacity_mw` | number | Capacity in megawatts |
-| `operating_date` | string | Operating or proposed online date (YYYY-MM-DD) |
-| `technology` | string | Standardized technology type |
-| `county` | string | County name |
-| `state` | string | State code (CA, TX, NY, etc.) |
-| `balancing_authority` | string | Balancing authority code |
-| `status` | string | Project status (Operating, Planned, Cancelled, Retired) |
+| Field                 | Type   | Description                                             |
+| --------------------- | ------ | ------------------------------------------------------- |
+| `source_table`        | string | Source data table (eia_860m, caiso_queue, etc.)         |
+| `source_id`           | string | Unique identifier within source table                   |
+| `project_name`        | string | Project or facility name                                |
+| `capacity_mw`         | number | Capacity in megawatts                                   |
+| `operating_date`      | string | Operating or proposed online date (YYYY-MM-DD)          |
+| `technology`          | string | Standardized technology type                            |
+| `county`              | string | County name                                             |
+| `state`               | string | State code (CA, TX, NY, etc.)                           |
+| `balancing_authority` | string | Balancing authority code                                |
+| `status`              | string | Project status (Operating, Planned, Cancelled, Retired) |
+| `developer`           | string | Developer/owner name (when `include_developer=true`)   |
 
 <Note>
-**Data Consolidation**: This endpoint provides a simplified view of complex energy project data. For detailed information, use the specific EIA 860M or interconnection queue endpoints.
+  **Data Consolidation**: This endpoint provides a simplified view of complex energy project data. For detailed information, use the specific EIA 860M or interconnection queue endpoints.
 </Note>
 
 <Info>
-**Cross-Reference**: Projects may appear in multiple sources. The `source_table` and `source_id` fields help identify the original data source for each record.
+  **Cross-Reference**: Projects may appear in multiple sources. The `source_table` and `source_id` fields help identify the original data source for each record.
 </Info>

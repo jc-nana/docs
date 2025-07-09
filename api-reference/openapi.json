@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://api.cleanview.co/api/v0",
+      "url": "https://api.cleanview.co/api/v1",
       "description": "Production server"
     }
   ],
@@ -265,7 +265,7 @@
                     },
                     "version": {
                       "type": "string",
-                      "example": "v0"
+                      "example": "v1"
                     },
                     "environment": {
                       "type": "string",

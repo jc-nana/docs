@@ -1,6 +1,6 @@
 ---
-title: 'Authentication'
-description: 'Learn how to authenticate with the Cleanview API using API keys'
+title: "Authentication"
+description: "Learn how to authenticate with the Cleanview API using API keys"
 ---
 
 ## API Key Authentication
@@ -10,6 +10,7 @@ The Cleanview API uses API key authentication. All requests must include a valid
 ### API Key Format
 
 API keys follow this format:
+
 ```
 cv_pub_[32 random characters base64url encoded]
 ```
@@ -30,11 +31,12 @@ x-api-key: cv_pub_your_api_key_here
 
 ```bash cURL
 curl -H "x-api-key: cv_pub_your_api_key_here" \
-  https://api.cleanview.co/api/v0/eia-860m
+  https://api.cleanview.co/api/v1/eia-860m
 ```
 
+
 ```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/eia-860m', {
+const response = await fetch('https://api.cleanview.co/api/v1/eia-860m', {
   headers: {
     'x-api-key': 'cv_pub_your_api_key_here'
   }
@@ -42,6 +44,7 @@ const response = await fetch('https://api.cleanview.co/api/v0/eia-860m', {
 
 const data = await response.json();
 ```
+
 
 ```python Python
 import requests
@@ -51,12 +54,13 @@ headers = {
 }
 
 response = requests.get(
-    'https://api.cleanview.co/api/v0/eia-860m',
+    'https://api.cleanview.co/api/v1/eia-860m',
     headers=headers
 )
 
 data = response.json()
 ```
+
 
 ```php PHP
 <?php
@@ -65,7 +69,7 @@ $headers = [
 ];
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'https://api.cleanview.co/api/v0/eia-860m');
+curl_setopt($ch, CURLOPT_URL, 'https://api.cleanview.co/api/v1/eia-860m');
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
@@ -91,30 +95,29 @@ When authentication fails, the API will return a `401 Unauthorized` status code 
 
 ### Common Error Codes
 
-| Error Code | Description |
-|------------|-------------|
-| `MISSING_API_KEY` | No API key provided in the request |
+| Error Code        | Description                          |
+| ----------------- | ------------------------------------ |
+| `MISSING_API_KEY` | No API key provided in the request   |
 | `INVALID_API_KEY` | API key doesn't exist or is inactive |
 
 ## Security Best Practices
 
 <AccordionGroup>
-  <Accordion icon="shield-check" title="Keep Your API Key Secure">
+  <Accordion title="Keep Your API Key Secure" icon="shield-check">
     - Never expose your API key in client-side code or public repositories
     - Store API keys as environment variables
     - Use different API keys for different environments (development, staging, production)
     - Regularly rotate your API keys
   </Accordion>
-  
-  <Accordion icon="server" title="Server-Side Only">
+  <Accordion title="Server-Side Only" icon="server">
     API keys should only be used in server-side applications. Never include them in:
+
     - Frontend JavaScript code
     - Mobile applications
     - Public GitHub repositories
     - Configuration files committed to version control
   </Accordion>
-  
-  <Accordion icon="eye" title="Monitor Usage">
+  <Accordion title="Monitor Usage" icon="eye">
     - Regularly review your API usage patterns
     - Watch for unexpected spikes in requests
     - Contact support if you notice suspicious activity
@@ -124,24 +127,17 @@ When authentication fails, the API will return a `401 Unauthorized` status code 
 ## Getting Your API Key
 
 <Steps>
-  <Step title="Contact Our Team">
+  <Step title="Schedule a demo">
     During the beta phase, API keys are manually provisioned. Visit [our demo page](https://cleanview.co/demo) to request access.
   </Step>
-  
-  <Step title="Provide Information">
-    Include in your request:
-    - Your name and company
-    - Intended use case for the API
-    - Expected request volume
-    - Technical contact information
+  <Step title="Tell us how you plan to use the API">
+    Let us know if you plan to use the data for internal business use only or want to integrate it into your product.
   </Step>
-  
-  <Step title="Receive Your Key">
+  <Step title="Receive your key">
     Our team will review your request and provide you with an API key along with any specific usage guidelines.
   </Step>
 </Steps>
 
 <Note>
-**Future Self-Service:** We're working on a self-service API key management portal that will be available in a future version of the API.
+  **Future Self-Service:** We're working on a self-service API key management portal that will be available in a future version of the API.
 </Note>
-

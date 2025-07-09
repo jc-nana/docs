@@ -1,7 +1,7 @@
 ---
 title: 'PJM Interconnection Queue'
 openapi: 'GET /interconnection/pjm'
-description: 'Access real-time PJM interconnection queue data for renewable energy projects'
+description: 'Access real-time PJM interconnection queue data for all power projects'
 ---
 
 ## Overview
@@ -9,7 +9,7 @@ description: 'Access real-time PJM interconnection queue data for renewable ener
 The PJM interconnection queue endpoint provides access to real-time data from PJM Interconnection's generation interconnection queue. PJM serves 13 states and the District of Columbia in the Mid-Atlantic and Midwest regions.
 
 <Note>
-**PJM Coverage**: Contains **1,800+ projects** across 13 states. Top technologies: Solar (600+ projects), Natural Gas (300+ projects), Wind (250+ projects), Battery Storage (200+ projects).
+**PJM Coverage**: Contains **9,200+ projects** across 13 states. Top technologies: Solar (4,000+ projects), Natural Gas (1,100+ projects), Storage (1,000+ projects), Wind (700+ projects).
 </Note>
 
 ## Endpoint
@@ -17,11 +17,11 @@ The PJM interconnection queue endpoint provides access to real-time data from PJ
 <CodeGroup>
 ```bash cURL
 curl -H "x-api-key: your_api_key_here" \
-  "https://api.cleanview.co/api/v0/interconnection/pjm?limit=50"
+  "https://api.cleanview.co/api/v1/interconnection/pjm?limit=50"
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/interconnection/pjm?limit=50', {
+const response = await fetch('https://api.cleanview.co/api/v1/interconnection/pjm?limit=50', {
   headers: {
     'x-api-key': 'your_api_key_here'
   }
@@ -34,7 +34,7 @@ import requests
 
 headers = {'x-api-key': 'your_api_key_here'}
 response = requests.get(
-    'https://api.cleanview.co/api/v0/interconnection/pjm?limit=50',
+    'https://api.cleanview.co/api/v1/interconnection/pjm?limit=50',
     headers=headers
 )
 data = response.json()
@@ -52,20 +52,11 @@ data = response.json()
 | `limit` | integer | 1000 | Number of records to return (50-5000) |
 | `offset` | integer | 0 | Number of records to skip |
 | `state` | string | - | Filter by state code (PA, OH, NJ, etc.) - supports comma-separated |
-| `technology` | string | - | Filter by standardized technology type - supports comma-separated |
+| `technology` | string | - | Filter by standardized technology type (derived from fuel_type) - supports comma-separated |
 | `status` | string | - | Filter by standardized status |
 | `min_capacity` | number | - | Minimum capacity in MW |
 | `max_capacity` | number | - | Maximum capacity in MW |
-| `county` | string | - | Filter by county name (partial match) |
-| `developer` | string | - | Filter by developer name (partial match) |
-| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
-| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
-| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
-| `transmission_owner` | string | - | Filter by transmission owner |
-| `study_phase` | string | - | Filter by study phase |
-| `project_type` | string | - | Filter by project type |
+| `developer` | string | - | Filter by developer name (supports partial matches) |
 
 ### Technology Options
 
@@ -75,11 +66,21 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 
 | Technology | Count | Description |
 |------------|-------|-------------|
-| `Solar` | 600+ | Solar photovoltaic projects |
-| `Natural Gas` | 300+ | Natural gas generation |
-| `Wind` | 250+ | Wind turbine projects |
-| `Battery` | 200+ | Battery energy storage systems |
-| `Other` | 450+ | Other technologies |
+| `Solar` | 4,000+ | Solar photovoltaic projects |
+| `Natural Gas` | 1,100+ | Natural gas generation |
+| `Storage` | 1,000+ | Battery energy storage systems |
+| `Wind` | 700+ | Wind turbine projects |
+| `Solar; Storage` | 500+ | Combined solar and storage projects |
+| `Methane` | 190+ | Methane/biogas projects |
+| `Coal` | 140+ | Coal generation |
+| `Hydro` | 95+ | Hydroelectric projects |
+| `Offshore Wind` | 80+ | Offshore wind projects |
+| `Nuclear` | 78+ | Nuclear generation |
+| `Other` | 300+ | Other technologies |
+
+<Note>
+**Technology Mapping**: The `technology` field is standardized from PJM's original `fuel_type` data to provide consistent filtering across all CleanView APIs.
+</Note>
 
 ### Status Options
 
@@ -105,7 +106,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Active Solar Projects in Pennsylvania">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/pjm?technology=Solar&status=Planned&state=PA&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/pjm?technology=Solar&status=Planned&state=PA&limit=50"
     ```
     
     Returns active solar projects in Pennsylvania within the PJM territory.
@@ -114,7 +115,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Large Natural Gas Projects (>300 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/pjm?technology=Natural Gas&min_capacity=300&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/pjm?technology=Natural%20Gas&min_capacity=300&limit=50"
     ```
     
     Finds large-scale natural gas projects in the PJM queue.
@@ -123,10 +124,28 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   <Accordion title="Get Projects by Multiple States">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/pjm?state=PA,OH,NJ&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/pjm?state=PA,OH,NJ&limit=50"
     ```
     
     Uses comma-separated values for multi-state filtering in the Mid-Atlantic region.
+  </Accordion>
+  
+  <Accordion title="Get Projects by Developer">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/pjm?developer=Invenergy&limit=50"
+    ```
+    
+    Filters projects that have developer mapping data. Supports partial matching (e.g., "Invenergy" matches "Invenergy LLC"). Projects without developer data are excluded from filtered results.
+  </Accordion>
+  
+  <Accordion title="Get Multiple Developer Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/pjm?developer=Invenergy,EDF,Lightsource&technology=Solar&limit=50"
+    ```
+    
+    Finds solar projects from multiple major developers in the PJM territory.
   </Accordion>
 </AccordionGroup>
 
@@ -146,16 +165,11 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
   },
   "filters": {
     "state": null,
-    "states": null,
     "technology": null,
-    "technologies": null,
     "status": null,
     "min_capacity": null,
     "max_capacity": null,
-    "county": null,
-    "transmission_owner": null,
-    "cod_start": null,
-    "cod_end": null
+    "developer": null
   },
   "data": [
     {
@@ -180,7 +194,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "interconnection_agreement_status": null,
       "construction_service_agreement_status": null,
       "transmission_owner": "PECO",
-      "project_type": "Generation",
+      "project_type": "Generation Interconnection",
       "balancing_authority_code": "PJM",
       "technology_normalized": "Solar",
       "project_number": "AB3-123",
@@ -209,7 +223,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
       "interconnection_agreement_status": "Executed",
       "construction_service_agreement_status": "Executed",
       "transmission_owner": "AEP",
-      "project_type": "Generation",
+      "project_type": "Generation Interconnection",
       "balancing_authority_code": "PJM",
       "technology_normalized": "Wind",
       "project_number": "AC1-456",
@@ -249,7 +263,8 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `fuel` | string | Fuel type description |
+| `fuel` | string | Original fuel type from PJM data |
+| `technology` | string | Standardized technology type (derived from fuel_type) |
 | `technology_normalized` | string | Same as `technology` for consistency |
 
 ### PJM-Specific Fields
@@ -257,7 +272,7 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 | Field | Type | Description |
 |-------|------|-------------|
 | `transmission_owner` | string | Transmission utility (PECO, PPL, etc.) |
-| `project_type` | string | Generation vs. Transmission project |
+| `project_type` | string | Interconnection type (Generation Interconnection, etc.) |
 
 ### Study Process
 
@@ -274,36 +289,6 @@ Use standardized technology names. See our [Interconnection Reference](/api-refe
 |-------|------|-------------|
 | `developer` | string | Developer name (limited availability) |
 
-## Data Statistics
-
-### Geographic Distribution
-
-| State | Project Count | Top Technology | Capacity (GW) |
-|-------|---------------|----------------|---------------|
-| Pennsylvania | ~400 | Solar, Natural Gas | ~15 |
-| Ohio | ~300 | Solar, Wind | ~12 |
-| New Jersey | ~250 | Solar | ~8 |
-| Illinois | ~200 | Solar, Wind | ~10 |
-| Virginia | ~180 | Solar | ~7 |
-
-### Technology Distribution
-
-| Technology | Average MW | Typical Range | Notes |
-|------------|------------|---------------|-------|
-| Solar | 95 | 5-500 MW | Distributed + utility scale |
-| Natural Gas | 485 | 200-1000 MW | Large combined cycle plants |
-| Wind | 175 | 50-400 MW | Onshore wind farms |
-| Battery | 125 | 25-400 MW | Storage growing rapidly |
-
-### Top Transmission Owners
-
-| Transmission Owner | Project Count | Primary States |
-|-------------------|---------------|----------------|
-| PPL | ~180 | PA |
-| PECO | ~150 | PA |
-| FirstEnergy | ~140 | OH, PA |
-| ComEd | ~120 | IL |
-| Dominion | ~100 | VA |
 
 <Note>
 **Data Updates**: PJM queue data is updated monthly based on PJM's New Services Queue reports. The API reflects the most recent interconnection queue data available.

@@ -1,27 +1,31 @@
 ---
 title: 'CAISO Interconnection Queue'
 openapi: 'GET /interconnection/caiso'
-description: 'Access real-time CAISO interconnection queue data for renewable energy projects'
+description: 'Access real-time CAISO interconnection queue data for all power projects'
 ---
 
 ## Overview
 
-The CAISO interconnection queue endpoint provides access to real-time data from the California Independent System Operator (CAISO) interconnection queue. This includes all renewable energy projects seeking to connect to the CAISO grid, which serves most of California and parts of Nevada.
+The CAISO interconnection queue endpoint provides access to real-time data from the California Independent System Operator (CAISO) interconnection queue, which serves most of California and parts of Nevada.
 
 <Note>
 **CAISO Coverage**: Contains **3,027 projects** across California (89%), Nevada (5%), Arizona (4%), and Mexico (1%). Top technologies: Solar (1,200+ projects), Battery Storage (1,100+ projects), Wind (300+ projects).
 </Note>
+
+<Warning>
+**Hybrid Projects**: CAISO represents hybrid projects (e.g., solar + storage) as single rows in their Excel source files with multiple technology columns. Our API splits these into separate records for each technology component. See our [comprehensive guide on hybrid project handling](/api-reference/interconnection-codes#how-we-handle-hybrid-projects) for details.
+</Warning>
 
 ## Endpoint
 
 <CodeGroup>
 ```bash cURL
 curl -H "x-api-key: your_api_key_here" \
-  "https://api.cleanview.co/api/v0/interconnection/caiso?limit=50"
+  "https://api.cleanview.co/api/v1/interconnection/caiso?limit=50"
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.cleanview.co/api/v0/interconnection/caiso?limit=50', {
+const response = await fetch('https://api.cleanview.co/api/v1/interconnection/caiso?limit=50', {
   headers: {
     'x-api-key': 'your_api_key_here'
   }
@@ -34,7 +38,7 @@ import requests
 
 headers = {'x-api-key': 'your_api_key_here'}
 response = requests.get(
-    'https://api.cleanview.co/api/v0/interconnection/caiso?limit=50',
+    'https://api.cleanview.co/api/v1/interconnection/caiso?limit=50',
     headers=headers
 )
 data = response.json()
@@ -52,15 +56,7 @@ data = response.json()
 | `status` | string | - | Filter by standardized status |
 | `min_capacity` | number | - | Minimum capacity in MW |
 | `max_capacity` | number | - | Maximum capacity in MW |
-| `county` | string | - | Filter by county name (partial match) |
-| `developer` | string | - | Filter by developer name (partial match) |
-| `operating_date_range_start` | date | - | Commercial operation date start (YYYY-MM-DD) |
-| `operating_date_range_end` | date | - | Commercial operation date end (YYYY-MM-DD) |
-| `queue_date_start` | date | - | Queue entry date start (YYYY-MM-DD) |
-| `queue_date_end` | date | - | Queue entry date end (YYYY-MM-DD) |
-| `has_coordinates` | boolean | - | Filter for projects with coordinate data availability |
-| `study_phase` | string | - | Filter by study phase (feasibility, systemImpact, facilities) |
-| `voltage` | number | - | Filter by voltage level (kV) |
+| `developer` | string | - | Filter by developer name (supports partial matches) |
 
 ### Technology Options
 
@@ -68,13 +64,21 @@ data = response.json()
 Use standardized technology names for consistent filtering. See our [Interconnection Reference](/api-reference/interconnection-codes#technology-classifications) for all available options.
 </Tip>
 
+<Warning>
+**CAISO Technology Field Mapping**: CAISO represents technology information differently from other ISOs. When filtering by `technology=Solar`, the API searches both the `technology` field (which contains CAISO's original terms like "Photovoltaic") and the `fuel` field (which contains "Solar"). This ensures consistent cross-ISO filtering while preserving CAISO's original data structure.
+
+**Example**: A CAISO solar project returns:
+- `technology`: "Photovoltaic" (CAISO's original term)  
+- `fuel`: "Solar" (standardized term)
+- Both fields are searched when using `technology=Solar` filter
+</Warning>
+
 | Technology | Count | Description |
 |------------|-------|-------------|
-| `Solar` | 1,200+ | Solar photovoltaic projects |
+| `Solar` | 1,200+ | Solar photovoltaic projects (searches both `technology` and `fuel` fields) |
 | `Battery` | 1,100+ | Battery energy storage systems |
 | `Wind` | 300+ | Wind turbine projects |
 | `Natural Gas` | 180+ | Natural gas generation |
-| `Hybrid - Solar + Storage` | 150+ | Co-located solar and battery |
 | `Other` | 200+ | Other technologies |
 
 ### Status Options
@@ -85,13 +89,6 @@ Use standardized technology names for consistent filtering. See our [Interconnec
 | `Operating` | 800+ | Commercial operation achieved |
 | `Cancelled` | 400+ | Withdrawn or terminated |
 
-### Study Phase Options (CAISO-Specific)
-
-| Phase | Description |
-|-------|-------------|
-| `feasibility` | Feasibility study phase |
-| `systemImpact` | System impact study phase |
-| `facilities` | Facilities study phase |
 
 ## Example Requests
 
@@ -99,7 +96,7 @@ Use standardized technology names for consistent filtering. See our [Interconnec
   <Accordion title="Get Active Solar Projects in California">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar&status=Planned&state=CA&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/caiso?technology=Solar&status=Planned&state=CA&limit=50"
     ```
     
     Returns active solar projects in the CAISO queue. Uses `technology=Solar` for standardized filtering.
@@ -108,28 +105,46 @@ Use standardized technology names for consistent filtering. See our [Interconnec
   <Accordion title="Get Large Battery Storage Projects (>100 MW)">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Battery&min_capacity=100&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/caiso?technology=Battery&min_capacity=100&limit=50"
     ```
     
     Finds large-scale battery storage projects. Uses `technology=Battery` for energy storage systems.
   </Accordion>
   
-  <Accordion title="Get Projects in Feasibility Study Phase">
+  <Accordion title="Get Wind Projects">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?study_phase=feasibility&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/caiso?technology=Wind&limit=50"
     ```
     
-    Filters for projects in the feasibility study phase (CAISO-specific feature).
+    Filters for wind projects in the CAISO queue.
   </Accordion>
   
   <Accordion title="Get Projects by Multiple Technologies">
     ```bash
     curl -H "x-api-key: your_api_key_here" \
-      "https://api.cleanview.co/api/v0/interconnection/caiso?technology=Solar,Wind,Battery&limit=50"
+      "https://api.cleanview.co/api/v1/interconnection/caiso?technology=Solar,Wind,Battery&limit=50"
     ```
     
     Uses comma-separated values for multiple technology filtering.
+  </Accordion>
+  
+  <Accordion title="Get NextEra Energy Projects">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/caiso?developer=NextEra&limit=50"
+    ```
+    
+    Filters for projects developed by NextEra Energy. Uses partial matching, so "NextEra" matches "NextEra Energy Resources".
+  </Accordion>
+  
+  <Accordion title="Get Projects Without Developer Information">
+    ```bash
+    curl -H "x-api-key: your_api_key_here" \
+      "https://api.cleanview.co/api/v1/interconnection/caiso?developer=null&limit=50"
+    ```
+    
+    Returns only projects that don't have developer information mapped in Cleanview's database.
   </Accordion>
 </AccordionGroup>
 
@@ -150,12 +165,10 @@ Use standardized technology names for consistent filtering. See our [Interconnec
   "filters": {
     "state": null,
     "technology": null,
+    "status": null,
     "min_capacity": null,
     "max_capacity": null,
-    "operating_date_range_start": null,
-    "operating_date_range_end": null,
-    "queue_date_start": null,
-    "queue_date_end": null
+    "developer": null
   },
   "data": [
     {
@@ -174,7 +187,7 @@ Use standardized technology names for consistent filtering. See our [Interconnec
       "county": "Kern",
       "queue_position": "1000",
       "interconnecting_entity": null,
-      "developer": null,
+      "developer": "NextEra Energy Resources",
       "feasibility_study_status": null,
       "system_impact_study_status": "Complete",
       "facilities_study_status": null,
@@ -184,7 +197,7 @@ Use standardized technology names for consistent filtering. See our [Interconnec
       "voltage_kv": null,
       "station_transmission_line": "Midway-Wheeler Ridge 230 kV Line",
       "study_area": null,
-      "balancing_authority_code": "PGAE"
+      "balancing_authority_code": "CISO"
     }
   ]
 }
@@ -246,35 +259,8 @@ Use standardized technology names for consistent filtering. See our [Interconnec
 | Field | Type | Description |
 |-------|------|-------------|
 | `interconnecting_entity` | string | Usually null for CAISO |
-| `developer` | string | Developer name (limited availability) |
+| `developer` | string | Developer name from Cleanview's database (e.g., "NextEra Energy", "Tesla", null for unmapped projects) |
 
-## Data Statistics
-
-### Geographic Distribution
-
-| State | Project Count | Percentage |
-|-------|---------------|------------|
-| California | ~2,700 | 89% |
-| Nevada | ~150 | 5% |
-| Arizona | ~120 | 4% |
-| Mexico | ~30 | 1% |
-
-### Capacity Distribution
-
-| Technology | Average MW | Typical Range |
-|------------|------------|---------------|
-| Solar | 156 | 20-500 MW |
-| Battery | 87 | 20-300 MW |
-| Wind | 228 | 50-800 MW |
-| Natural Gas | 387 | 100-1000 MW |
-
-### Study Status Distribution
-
-| Study Type | Complete | In Progress | Not Started |
-|------------|----------|-------------|-------------|
-| System Impact | 65% | 20% | 15% |
-| Facilities | 45% | 25% | 30% |
-| Interconnection Agreement | 30% | 15% | 55% |
 
 <Note>
 **Data Updates**: CAISO queue data is updated weekly. The API reflects the most recent queue data available from CAISO's public reports.
